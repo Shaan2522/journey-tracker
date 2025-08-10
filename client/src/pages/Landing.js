@@ -2,87 +2,77 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Landing = () => {
-    
     return (
         <div style={{
             minHeight: '100vh',
-            background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 25%, #334155 50%, #475569 75%, #64748B 100%)',
-            color: '#F8FAFC'
+            backgroundColor: '#ffffff',
+            fontFamily: 'var(--font-family-primary)'
         }}>
-            {/* Header */}
+            {/* Google Maps Style Header */}
             <header style={{
                 position: 'sticky',
                 top: 0,
                 zIndex: 1000,
-                backgroundColor: 'rgba(15, 23, 42, 0.95)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                borderBottom: '1px solid rgba(148, 163, 184, 0.2)',
-                padding: '0 var(--spacing-6)',
-                height: 'var(--header-height)',
+                backgroundColor: '#ffffff',
+                borderBottom: '1px solid var(--google-gray-200)',
+                padding: '0 24px',
+                height: '64px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.06)',
-                transition: 'all var(--transition-normal)'
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
             }}>
-                {/* Logo */}
+                {/* Google Maps Logo */}
                 <Link to="/" style={{ 
                     display: 'flex', 
                     alignItems: 'center', 
                     gap: 'var(--spacing-3)', 
-                    textDecoration: 'none',
-                    transition: 'all var(--transition-normal)'
+                    textDecoration: 'none'
                 }}>
                     <div style={{
-                        width: '2.5rem',
-                        height: '2.5rem',
-                        backgroundColor: 'var(--primary-teal)',
-                        borderRadius: 'var(--radius-lg)',
+                        width: '40px',
+                        height: '40px',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '1.25rem'
+                        justifyContent: 'center'
                     }}>
-                        🗺️
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#EA4335"/>
+                            <path d="M12 8c0.55 0 1 0.45 1 1s-0.45 1-1 1-1-0.45-1-1 0.45-1 1-1z" fill="#ffffff"/>
+                        </svg>
                     </div>
                     <h1 style={{ 
                         margin: 0, 
-                        fontSize: 'var(--font-size-xl)',
-                        fontWeight: 'var(--font-weight-bold)',
-                        color: '#F8FAFC',
-                        background: 'linear-gradient(135deg, #14B8A6 0%, #F97316 100%)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text'
+                        fontSize: '22px',
+                        fontWeight: '400',
+                        color: '#5f6368',
+                        fontFamily: 'var(--font-family-primary)'
                     }}>
                         Journey Tracker
                     </h1>
                 </Link>
 
-                {/* Header Actions */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-4)' }}>
-                    {/* Auth Buttons */}
+                {/* Google Style Header Actions */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <Link 
                         to="/login" 
                         style={{
                             textDecoration: 'none',
-                            color: '#CBD5E1',
-                            fontSize: 'var(--font-size-base)',
-                            fontWeight: 'var(--font-weight-medium)',
-                            padding: 'var(--spacing-2) var(--spacing-4)',
-                            borderRadius: 'var(--radius-md)',
-                            transition: 'all var(--transition-normal)',
+                            color: 'var(--google-blue)',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            padding: '8px 16px',
+                            borderRadius: '4px',
+                            transition: 'background-color var(--transition-standard)',
                             border: 'none',
-                            backgroundColor: 'transparent'
+                            backgroundColor: 'transparent',
+                            fontFamily: 'var(--font-family-primary)'
                         }}
                         onMouseEnter={(e) => {
-                            e.target.style.backgroundColor = 'rgba(148, 163, 184, 0.2)';
-                            e.target.style.color = '#F8FAFC';
+                            e.target.style.backgroundColor = 'rgba(26, 115, 232, 0.04)';
                         }}
                         onMouseLeave={(e) => {
                             e.target.style.backgroundColor = 'transparent';
-                            e.target.style.color = '#CBD5E1';
                         }}
                     >
                         Sign In
@@ -91,26 +81,25 @@ const Landing = () => {
                         to="/signup" 
                         style={{
                             textDecoration: 'none',
-                            backgroundColor: '#14B8A6',
+                            backgroundColor: 'var(--google-blue)',
                             color: 'white',
-                            padding: 'var(--spacing-3) var(--spacing-6)',
-                            borderRadius: 'var(--radius-md)',
-                            fontSize: 'var(--font-size-base)',
-                            fontWeight: 'var(--font-weight-semibold)',
-                            transition: 'all var(--transition-normal)',
+                            padding: '10px 24px',
+                            borderRadius: '4px',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            transition: 'all var(--transition-standard)',
                             border: 'none',
-                            boxShadow: '0 4px 12px rgba(20, 184, 166, 0.4)',
-                            display: 'inline-block'
+                            boxShadow: 'var(--elevation-2)',
+                            fontFamily: 'var(--font-family-primary)',
+                            textTransform: 'none'
                         }}
                         onMouseEnter={(e) => {
-                            e.target.style.backgroundColor = '#0F9B8E';
-                            e.target.style.transform = 'translateY(-1px)';
-                            e.target.style.boxShadow = '0 8px 20px rgba(20, 184, 166, 0.5)';
+                            e.target.style.backgroundColor = 'var(--google-blue-dark)';
+                            e.target.style.boxShadow = 'var(--elevation-4)';
                         }}
                         onMouseLeave={(e) => {
-                            e.target.style.backgroundColor = '#14B8A6';
-                            e.target.style.transform = 'translateY(0)';
-                            e.target.style.boxShadow = '0 4px 12px rgba(20, 184, 166, 0.4)';
+                            e.target.style.backgroundColor = 'var(--google-blue)';
+                            e.target.style.boxShadow = 'var(--elevation-2)';
                         }}
                     >
                         Get Started
@@ -118,313 +107,326 @@ const Landing = () => {
                 </div>
             </header>
 
-            {/* Hero Section */}
+            {/* Google Maps Style Hero Section */}
             <section style={{
-                padding: '8rem var(--spacing-6) 6rem',
+                padding: '80px 24px 120px',
                 textAlign: 'center',
-                background: 'linear-gradient(135deg, rgba(20, 184, 166, 0.1) 0%, rgba(249, 115, 22, 0.1) 100%)',
-                position: 'relative',
-                overflow: 'hidden'
+                backgroundColor: '#ffffff',
+                position: 'relative'
             }}>
-                {/* Background Pattern */}
-                <div style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    backgroundImage: `
-                        radial-gradient(circle at 20% 80%, rgba(20, 184, 166, 0.3) 0%, transparent 60%),
-                        radial-gradient(circle at 80% 20%, rgba(249, 115, 22, 0.2) 0%, transparent 60%),
-                        radial-gradient(circle at 40% 40%, rgba(147, 51, 234, 0.1) 0%, transparent 60%)
-                    `,
-                    zIndex: 0
-                }} />
-                
                 <div style={{ 
-                    position: 'relative',
-                    zIndex: 1,
                     maxWidth: '1200px',
                     margin: '0 auto'
                 }}>
                     <h1 style={{
-                        fontSize: 'clamp(3rem, 6vw, 5rem)',
-                        fontWeight: '900',
-                        marginBottom: 'var(--spacing-6)',
-                        color: '#F8FAFC',
-                        lineHeight: 1.1,
-                        letterSpacing: '-0.02em'
+                        fontSize: 'clamp(3rem, 5vw, 4.5rem)',
+                        fontWeight: '400',
+                        marginBottom: '24px',
+                        color: '#3c4043',
+                        lineHeight: 1.2,
+                        letterSpacing: '-0.01em',
+                        fontFamily: 'var(--font-family-primary)'
                     }}>
                         Track Your Journey<br />
                         <span style={{
-                            background: 'linear-gradient(135deg, #14B8A6 0%, #F97316 50%, #A855F7 100%)',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            backgroundClip: 'text'
+                            color: '#1a73e8',
+                            fontWeight: '400'
                         }}>
                             Share Your Adventure
                         </span>
                     </h1>
                     
                     <p style={{
-                        fontSize: 'var(--font-size-xl)',
-                        color: '#CBD5E1',
-                        marginBottom: 'var(--spacing-8)',
-                        maxWidth: '700px',
-                        margin: '0 auto var(--spacing-8)',
-                        lineHeight: 1.6,
-                        opacity: 0.9
+                        fontSize: '18px',
+                        color: '#5f6368',
+                        marginBottom: '48px',
+                        maxWidth: '720px',
+                        margin: '0 auto 48px',
+                        lineHeight: 1.5,
+                        fontFamily: 'var(--font-family-secondary)'
                     }}>
                         Plan, track, and share your journeys with real-time location sharing, 
-                        interactive maps, and seamless group coordination. Perfect for adventures, 
-                        trips, and everyday navigation.
+                        interactive maps, and seamless group coordination. Built with the reliability 
+                        and precision you expect from modern mapping technology.
                     </p>
 
                     <div style={{
                         display: 'flex',
-                        gap: 'var(--spacing-4)',
+                        gap: '16px',
                         justifyContent: 'center',
                         flexWrap: 'wrap',
-                        marginBottom: 'var(--spacing-12)'
+                        marginBottom: '80px'
                     }}>
                         <Link 
                             to="/signup" 
                             style={{
-                                textDecoration: 'none',
-                                background: 'linear-gradient(135deg, #14B8A6 0%, #0F9B8E 100%)',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                backgroundColor: '#1a73e8',
                                 color: 'white',
-                                fontSize: 'var(--font-size-lg)',
-                                fontWeight: '600',
-                                padding: 'var(--spacing-4) var(--spacing-8)',
-                                borderRadius: 'var(--radius-full)',
-                                transition: 'all var(--transition-normal)',
+                                padding: '14px 32px',
+                                textDecoration: 'none',
+                                borderRadius: '4px',
+                                fontSize: '16px',
+                                fontWeight: '500',
+                                transition: 'all var(--transition-standard)',
                                 border: 'none',
-                                boxShadow: '0 8px 32px rgba(20, 184, 166, 0.4), 0 4px 16px rgba(20, 184, 166, 0.2)',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: 'var(--spacing-2)',
-                                position: 'relative',
-                                overflow: 'hidden'
+                                boxShadow: 'var(--elevation-2)',
+                                fontFamily: 'var(--font-family-primary)',
+                                textTransform: 'none'
                             }}
                             onMouseEnter={(e) => {
-                                e.target.style.transform = 'translateY(-3px) scale(1.02)';
-                                e.target.style.boxShadow = '0 12px 40px rgba(20, 184, 166, 0.5), 0 6px 20px rgba(20, 184, 166, 0.3)';
+                                e.target.style.backgroundColor = '#1557b0';
+                                e.target.style.boxShadow = 'var(--elevation-4)';
                             }}
                             onMouseLeave={(e) => {
-                                e.target.style.transform = 'translateY(0) scale(1)';
-                                e.target.style.boxShadow = '0 8px 32px rgba(20, 184, 166, 0.4), 0 4px 16px rgba(20, 184, 166, 0.2)';
+                                e.target.style.backgroundColor = '#1a73e8';
+                                e.target.style.boxShadow = 'var(--elevation-2)';
                             }}
                         >
-                            Start Tracking Free
-                            <span style={{ fontSize: '1.2em' }}>→</span>
+                            Get Started Free
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M13.025 1l-2.847 2.828 6.176 6.176h-16.354v3.992h16.354l-6.176 6.176 2.847 2.828 10.975-11z"/>
+                            </svg>
                         </Link>
-                        <button 
+                        
+                        <Link 
+                            to="/demo" 
                             style={{
-                                background: 'rgba(148, 163, 184, 0.1)',
-                                backdropFilter: 'blur(10px)',
-                                WebkitBackdropFilter: 'blur(10px)',
-                                color: '#F8FAFC',
-                                fontSize: 'var(--font-size-lg)',
-                                fontWeight: '600',
-                                padding: 'var(--spacing-4) var(--spacing-8)',
-                                borderRadius: 'var(--radius-full)',
-                                border: '1px solid rgba(148, 163, 184, 0.3)',
-                                transition: 'all var(--transition-normal)',
-                                cursor: 'pointer',
                                 display: 'inline-flex',
                                 alignItems: 'center',
-                                gap: 'var(--spacing-2)',
-                                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
+                                gap: '8px',
+                                backgroundColor: 'transparent',
+                                color: '#1a73e8',
+                                padding: '14px 32px',
+                                textDecoration: 'none',
+                                borderRadius: '4px',
+                                fontSize: '16px',
+                                fontWeight: '500',
+                                transition: 'all var(--transition-standard)',
+                                border: '1px solid #dadce0',
+                                fontFamily: 'var(--font-family-primary)',
+                                textTransform: 'none'
                             }}
                             onMouseEnter={(e) => {
-                                e.target.style.background = 'rgba(148, 163, 184, 0.2)';
-                                e.target.style.borderColor = 'rgba(148, 163, 184, 0.5)';
-                                e.target.style.transform = 'translateY(-2px)';
-                                e.target.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.15)';
+                                e.target.style.backgroundColor = '#f8f9fa';
+                                e.target.style.borderColor = '#1a73e8';
                             }}
                             onMouseLeave={(e) => {
-                                e.target.style.background = 'rgba(148, 163, 184, 0.1)';
-                                e.target.style.borderColor = 'rgba(148, 163, 184, 0.3)';
-                                e.target.style.transform = 'translateY(0)';
-                                e.target.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.1)';
+                                e.target.style.backgroundColor = 'transparent';
+                                e.target.style.borderColor = '#dadce0';
                             }}
                         >
-                            <span style={{ fontSize: '1.1em' }}>▶</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
                             Watch Demo
-                        </button>
+                        </Link>
                     </div>
 
-                    {/* Feature Preview */}
+                    {/* Google Style Feature Preview */}
                     <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                        gap: 'var(--spacing-8)',
-                        marginTop: 'var(--spacing-16)'
+                        background: '#f8f9fa',
+                        borderRadius: '8px',
+                        padding: '48px 32px',
+                        maxWidth: '960px',
+                        margin: '0 auto',
+                        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+                        border: '1px solid #e8eaed'
                     }}>
                         <div style={{
+                            backgroundColor: '#ffffff',
+                            borderRadius: '8px',
+                            height: '400px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '48px',
+                            color: '#1a73e8',
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                            border: '1px solid #e8eaed'
+                        }}>
+                            🗺️
+                        </div>
+                        <p style={{
+                            marginTop: '16px',
+                            fontSize: '14px',
+                            color: '#5f6368',
+                            fontFamily: 'var(--font-family-secondary)'
+                        }}>
+                            Interactive map interface powered by OpenStreetMap technology
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            {/* Google Material Features Grid */}
+            <section style={{
+                padding: '80px 24px',
+                backgroundColor: '#f8f9fa'
+            }}>
+                <div style={{
+                    maxWidth: '1200px',
+                    margin: '0 auto'
+                }}>
+                    <div style={{
+                        textAlign: 'center',
+                        marginBottom: '64px'
+                    }}>
+                        <h2 style={{
+                            fontSize: '36px',
+                            fontWeight: '400',
+                            color: '#3c4043',
+                            marginBottom: '16px',
+                            fontFamily: 'var(--font-family-primary)'
+                        }}>
+                            Everything you need to track journeys
+                        </h2>
+                        <p style={{
+                            fontSize: '16px',
+                            color: '#5f6368',
+                            maxWidth: '600px',
+                            margin: '0 auto',
+                            lineHeight: 1.5,
+                            fontFamily: 'var(--font-family-secondary)'
+                        }}>
+                            Powerful features designed for seamless location sharing and group coordination
+                        </p>
+                    </div>
+
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                        gap: '32px'
+                    }}>
+                        {/* Interactive Maps Feature */}
+                        <div style={{
+                            backgroundColor: '#ffffff',
+                            borderRadius: '8px',
+                            padding: '32px',
                             textAlign: 'left',
-                            background: 'rgba(248, 250, 252, 0.1)',
-                            backdropFilter: 'blur(20px)',
-                            WebkitBackdropFilter: 'blur(20px)',
-                            border: '1px solid rgba(148, 163, 184, 0.2)',
-                            borderRadius: 'var(--radius-xl)',
-                            padding: 'var(--spacing-8)',
-                            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-                            transition: 'all var(--transition-normal)',
-                            cursor: 'pointer',
-                            position: 'relative',
-                            overflow: 'hidden'
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = 'translateY(-8px)';
-                            e.currentTarget.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.15)';
-                            e.currentTarget.style.background = 'rgba(248, 250, 252, 0.15)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
-                            e.currentTarget.style.background = 'rgba(248, 250, 252, 0.1)';
-                        }}
-                        >
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                            border: '1px solid #e8eaed',
+                            transition: 'all var(--transition-standard)'
+                        }}>
                             <div style={{
-                                width: '3rem',
-                                height: '3rem',
-                                backgroundColor: 'rgba(20, 184, 166, 0.1)',
-                                borderRadius: 'var(--radius-lg)',
+                                width: '48px',
+                                height: '48px',
+                                backgroundColor: '#e8f0fe',
+                                borderRadius: '8px',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                fontSize: '1.5rem',
-                                marginBottom: 'var(--spacing-4)'
+                                marginBottom: '16px'
                             }}>
-                                🗺️
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="#1a73e8">
+                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                </svg>
                             </div>
                             <h3 style={{
-                                fontSize: 'var(--font-size-lg)',
-                                fontWeight: 'var(--font-weight-semibold)',
-                                color: 'var(--neutral-900)',
-                                marginBottom: 'var(--spacing-2)'
+                                fontSize: '18px',
+                                fontWeight: '500',
+                                color: '#3c4043',
+                                marginBottom: '8px',
+                                fontFamily: 'var(--font-family-primary)'
                             }}>
                                 Interactive Maps
                             </h3>
                             <p style={{
-                                color: 'var(--neutral-600)',
+                                color: '#5f6368',
                                 lineHeight: 1.5,
-                                margin: 0
+                                margin: 0,
+                                fontSize: '14px',
+                                fontFamily: 'var(--font-family-secondary)'
                             }}>
                                 Powered by OpenStreetMap with real-time location tracking and custom markers.
                             </p>
                         </div>
 
+                        {/* Group Coordination Feature */}
                         <div style={{
+                            backgroundColor: '#ffffff',
+                            borderRadius: '8px',
+                            padding: '32px',
                             textAlign: 'left',
-                            background: 'rgba(255, 255, 255, 0.08)',
-                            backdropFilter: 'blur(20px)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                            borderRadius: 'var(--radius-xl)',
-                            padding: 'var(--spacing-6)',
-                            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05)',
-                            transition: 'all var(--transition-normal)',
-                            cursor: 'pointer',
-                            position: 'relative',
-                            overflow: 'hidden'
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)';
-                            e.currentTarget.style.boxShadow = '0 32px 64px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(249, 115, 22, 0.3)';
-                            e.currentTarget.style.background = 'rgba(249, 115, 22, 0.15)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                            e.currentTarget.style.boxShadow = '0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05)';
-                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
-                        }}
-                        >
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                            border: '1px solid #e8eaed',
+                            transition: 'all var(--transition-standard)'
+                        }}>
                             <div style={{
-                                width: '3rem',
-                                height: '3rem',
-                                background: 'linear-gradient(135deg, rgba(249, 115, 22, 0.3), rgba(249, 115, 22, 0.1))',
-                                borderRadius: 'var(--radius-lg)',
+                                width: '48px',
+                                height: '48px',
+                                backgroundColor: '#fce8e6',
+                                borderRadius: '8px',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                fontSize: '1.5rem',
-                                marginBottom: 'var(--spacing-4)',
-                                border: '1px solid rgba(249, 115, 22, 0.2)'
+                                marginBottom: '16px'
                             }}>
-                                👥
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="#ea4335">
+                                    <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A1.5 1.5 0 0 0 18.5 7h-3c-.83 0-1.54.5-1.85 1.22l-1.92 5.78H9.5v6H11v-6h1.23l2.77-8.31V4c0-1.11-.89-2-2-2s-2 .89-2 2 .89 2 2 2-2-.89-2-2z"/>
+                                </svg>
                             </div>
                             <h3 style={{
-                                fontSize: 'var(--font-size-lg)',
-                                fontWeight: '700',
-                                color: '#F8FAFC',
-                                marginBottom: 'var(--spacing-2)',
-                                letterSpacing: '-0.01em'
+                                fontSize: '18px',
+                                fontWeight: '500',
+                                color: '#3c4043',
+                                marginBottom: '8px',
+                                fontFamily: 'var(--font-family-primary)'
                             }}>
                                 Group Coordination
                             </h3>
                             <p style={{
-                                color: '#CBD5E1',
-                                lineHeight: 1.6,
+                                color: '#5f6368',
+                                lineHeight: 1.5,
                                 margin: 0,
-                                fontSize: '0.95rem'
+                                fontSize: '14px',
+                                fontFamily: 'var(--font-family-secondary)'
                             }}>
                                 Share your location with group members and coordinate journeys seamlessly.
                             </p>
                         </div>
 
+                        {/* Real-time Updates Feature */}
                         <div style={{
+                            backgroundColor: '#ffffff',
+                            borderRadius: '8px',
+                            padding: '32px',
                             textAlign: 'left',
-                            background: 'rgba(255, 255, 255, 0.08)',
-                            backdropFilter: 'blur(20px)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                            borderRadius: 'var(--radius-xl)',
-                            padding: 'var(--spacing-6)',
-                            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05)',
-                            transition: 'all var(--transition-normal)',
-                            cursor: 'pointer',
-                            position: 'relative',
-                            overflow: 'hidden'
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)';
-                            e.currentTarget.style.boxShadow = '0 32px 64px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(168, 85, 247, 0.3)';
-                            e.currentTarget.style.background = 'rgba(168, 85, 247, 0.15)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                            e.currentTarget.style.boxShadow = '0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05)';
-                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
-                        }}
-                        >
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                            border: '1px solid #e8eaed',
+                            transition: 'all var(--transition-standard)'
+                        }}>
                             <div style={{
-                                width: '3rem',
-                                height: '3rem',
-                                background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(168, 85, 247, 0.1))',
-                                borderRadius: 'var(--radius-lg)',
+                                width: '48px',
+                                height: '48px',
+                                backgroundColor: '#e6f4ea',
+                                borderRadius: '8px',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                fontSize: '1.5rem',
-                                marginBottom: 'var(--spacing-4)',
-                                border: '1px solid rgba(168, 85, 247, 0.2)'
+                                marginBottom: '16px'
                             }}>
-                                ⚡
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="#34a853">
+                                    <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/>
+                                </svg>
                             </div>
                             <h3 style={{
-                                fontSize: 'var(--font-size-lg)',
-                                fontWeight: '700',
-                                color: '#F8FAFC',
-                                marginBottom: 'var(--spacing-2)',
-                                letterSpacing: '-0.01em'
+                                fontSize: '18px',
+                                fontWeight: '500',
+                                color: '#3c4043',
+                                marginBottom: '8px',
+                                fontFamily: 'var(--font-family-primary)'
                             }}>
                                 Real-time Updates
                             </h3>
                             <p style={{
-                                color: '#CBD5E1',
-                                lineHeight: 1.6,
+                                color: '#5f6368',
+                                lineHeight: 1.5,
                                 margin: 0,
-                                fontSize: '0.95rem'
+                                fontSize: '14px',
+                                fontFamily: 'var(--font-family-secondary)'
                             }}>
                                 Get instant updates on location changes and journey progress.
                             </p>
@@ -433,324 +435,122 @@ const Landing = () => {
                 </div>
             </section>
 
-            {/* How it Works Section */}
+            {/* Google Style CTA Section */}
             <section style={{
-                padding: '6rem var(--spacing-6)',
-                background: 'rgba(15, 23, 42, 0.9)',
-                position: 'relative',
-                overflow: 'hidden'
+                padding: '80px 24px',
+                backgroundColor: '#ffffff',
+                textAlign: 'center'
             }}>
                 <div style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    background: 'radial-gradient(circle at 30% 70%, rgba(20, 184, 166, 0.15) 0%, transparent 50%), radial-gradient(circle at 70% 30%, rgba(168, 85, 247, 0.1) 0%, transparent 50%)',
-                    pointerEvents: 'none'
-                }}></div>
-                
-                <div style={{
-                    maxWidth: '1200px',
-                    margin: '0 auto',
-                    textAlign: 'center',
-                    position: 'relative'
+                    maxWidth: '800px',
+                    margin: '0 auto'
                 }}>
                     <h2 style={{
-                        fontSize: 'clamp(2.5rem, 5vw, 3.5rem)',
-                        fontWeight: '900',
-                        background: 'linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 50%, #CBD5E1 100%)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text',
-                        marginBottom: 'var(--spacing-4)',
-                        letterSpacing: '-0.02em'
+                        fontSize: '36px',
+                        fontWeight: '400',
+                        marginBottom: '16px',
+                        color: '#3c4043',
+                        fontFamily: 'var(--font-family-primary)'
                     }}>
-                        How It Works
+                        Ready to start your journey?
                     </h2>
                     
                     <p style={{
-                        fontSize: 'var(--font-size-lg)',
-                        color: '#94A3B8',
-                        marginBottom: 'var(--spacing-12)',
+                        fontSize: '16px',
+                        marginBottom: '32px',
+                        color: '#5f6368',
+                        lineHeight: 1.5,
                         maxWidth: '600px',
-                        margin: '0 auto var(--spacing-12)',
-                        lineHeight: 1.6
-                    }}>
-                        Get started in three simple steps and never lose track of your group again.
-                    </p>
-
-                    <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-                        gap: 'var(--spacing-12)',
-                        marginTop: 'var(--spacing-8)'
-                    }}>
-                        <div style={{ textAlign: 'center' }}>
-                            <div style={{
-                                width: '5rem',
-                                height: '5rem',
-                                background: 'linear-gradient(135deg, rgba(20, 184, 166, 0.8) 0%, rgba(20, 184, 166, 1) 100%)',
-                                borderRadius: 'var(--radius-full)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontSize: '1.75rem',
-                                fontWeight: '800',
-                                color: 'white',
-                                margin: '0 auto var(--spacing-6)',
-                                boxShadow: '0 20px 40px rgba(20, 184, 166, 0.4), 0 0 0 1px rgba(20, 184, 166, 0.3)',
-                                border: '2px solid rgba(20, 184, 166, 0.2)'
-                            }}>
-                                1
-                            </div>
-                            <h3 style={{
-                                fontSize: 'var(--font-size-xl)',
-                                fontWeight: '700',
-                                color: '#F8FAFC',
-                                marginBottom: 'var(--spacing-3)',
-                                letterSpacing: '-0.01em'
-                            }}>
-                                Create Account
-                            </h3>
-                            <p style={{
-                                color: '#CBD5E1',
-                                lineHeight: 1.6,
-                                fontSize: '1rem'
-                            }}>
-                                Sign up for free in seconds. No credit card required.
-                            </p>
-                        </div>
-
-                        <div style={{ textAlign: 'center' }}>
-                            <div style={{
-                                width: '5rem',
-                                height: '5rem',
-                                background: 'linear-gradient(135deg, rgba(249, 115, 22, 0.8) 0%, rgba(249, 115, 22, 1) 100%)',
-                                borderRadius: 'var(--radius-full)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontSize: '1.75rem',
-                                fontWeight: '800',
-                                color: 'white',
-                                margin: '0 auto var(--spacing-6)',
-                                boxShadow: '0 20px 40px rgba(249, 115, 22, 0.4), 0 0 0 1px rgba(249, 115, 22, 0.3)',
-                                border: '2px solid rgba(249, 115, 22, 0.2)'
-                            }}>
-                                2
-                            </div>
-                            <h3 style={{
-                                fontSize: 'var(--font-size-xl)',
-                                fontWeight: '700',
-                                color: '#F8FAFC',
-                                marginBottom: 'var(--spacing-3)',
-                                letterSpacing: '-0.01em'
-                            }}>
-                                Start Journey
-                            </h3>
-                            <p style={{
-                                color: '#CBD5E1',
-                                lineHeight: 1.6,
-                                fontSize: '1rem'
-                            }}>
-                                Create a new journey or join an existing one with your group.
-                            </p>
-                        </div>
-
-                        <div style={{ textAlign: 'center' }}>
-                            <div style={{
-                                width: '5rem',
-                                height: '5rem',
-                                background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.8) 0%, rgba(168, 85, 247, 1) 100%)',
-                                borderRadius: 'var(--radius-full)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontSize: '1.75rem',
-                                fontWeight: '800',
-                                color: 'white',
-                                margin: '0 auto var(--spacing-6)',
-                                boxShadow: '0 20px 40px rgba(168, 85, 247, 0.4), 0 0 0 1px rgba(168, 85, 247, 0.3)',
-                                border: '2px solid rgba(168, 85, 247, 0.2)'
-                            }}>
-                                3
-                            </div>
-                            <h3 style={{
-                                fontSize: 'var(--font-size-xl)',
-                                fontWeight: '700',
-                                color: '#F8FAFC',
-                                marginBottom: 'var(--spacing-3)',
-                                letterSpacing: '-0.01em'
-                            }}>
-                                Track Together
-                            </h3>
-                            <p style={{
-                                color: '#CBD5E1',
-                                lineHeight: 1.6,
-                                fontSize: '1rem'
-                            }}>
-                                See everyone's location in real-time on interactive maps.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* CTA Section */}
-            <section style={{
-                padding: '6rem var(--spacing-6)',
-                background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.9) 50%, rgba(51, 65, 85, 0.85) 100%)',
-                backdropFilter: 'blur(20px)',
-                color: 'white',
-                textAlign: 'center',
-                position: 'relative',
-                overflow: 'hidden'
-            }}>
-                <div style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    background: 'radial-gradient(circle at 20% 50%, rgba(20, 184, 166, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(249, 115, 22, 0.2) 0%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(168, 85, 247, 0.2) 0%, transparent 50%)',
-                    pointerEvents: 'none'
-                }}></div>
-                
-                <div style={{
-                    maxWidth: '900px',
-                    margin: '0 auto',
-                    position: 'relative'
-                }}>
-                    <h2 style={{
-                        fontSize: 'clamp(2.5rem, 5vw, 4rem)',
-                        fontWeight: '900',
-                        background: 'linear-gradient(135deg, #FFFFFF 0%, #E2E8F0 50%, #CBD5E1 100%)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text',
-                        marginBottom: 'var(--spacing-6)',
-                        letterSpacing: '-0.02em'
-                    }}>
-                        Ready to Start Your Journey?
-                    </h2>
-                    
-                    <p style={{
-                        fontSize: 'var(--font-size-xl)',
-                        marginBottom: 'var(--spacing-10)',
-                        color: '#CBD5E1',
-                        lineHeight: 1.6,
-                        maxWidth: '700px',
-                        margin: '0 auto var(--spacing-10)'
+                        margin: '0 auto 32px',
+                        fontFamily: 'var(--font-family-secondary)'
                     }}>
                         Join thousands of users already tracking their adventures together. 
                         Start for free and upgrade when you're ready.
                     </p>
 
-                    <div style={{
-                        display: 'flex',
-                        gap: 'var(--spacing-6)',
-                        justifyContent: 'center',
-                        flexWrap: 'wrap'
-                    }}>
-                        <Link to="/signup" style={{
+                    <Link 
+                        to="/signup" 
+                        style={{
                             display: 'inline-flex',
                             alignItems: 'center',
-                            gap: 'var(--spacing-3)',
-                            background: 'linear-gradient(135deg, rgba(20, 184, 166, 0.9) 0%, rgba(20, 184, 166, 1) 100%)',
+                            gap: '8px',
+                            backgroundColor: '#1a73e8',
                             color: 'white',
-                            padding: 'var(--spacing-5) var(--spacing-10)',
+                            padding: '16px 40px',
                             textDecoration: 'none',
-                            borderRadius: 'var(--radius-full)',
-                            fontSize: 'var(--font-size-lg)',
-                            fontWeight: '700',
-                            transition: 'all var(--transition-normal)',
-                            boxShadow: '0 20px 40px rgba(20, 184, 166, 0.4), 0 0 0 1px rgba(20, 184, 166, 0.3)',
-                            border: '2px solid rgba(20, 184, 166, 0.2)',
-                            backdropFilter: 'blur(10px)',
-                            letterSpacing: '-0.01em'
+                            borderRadius: '4px',
+                            fontSize: '16px',
+                            fontWeight: '500',
+                            transition: 'all var(--transition-standard)',
+                            border: 'none',
+                            boxShadow: 'var(--elevation-2)',
+                            fontFamily: 'var(--font-family-primary)',
+                            textTransform: 'none'
                         }}
                         onMouseEnter={(e) => {
-                            e.target.style.transform = 'translateY(-4px) scale(1.05)';
-                            e.target.style.boxShadow = '0 25px 50px rgba(20, 184, 166, 0.5), 0 0 0 1px rgba(20, 184, 166, 0.4)';
-                            e.target.style.background = 'linear-gradient(135deg, rgba(20, 184, 166, 1) 0%, rgba(6, 182, 212, 1) 100%)';
+                            e.target.style.backgroundColor = '#1557b0';
+                            e.target.style.boxShadow = 'var(--elevation-4)';
                         }}
                         onMouseLeave={(e) => {
-                            e.target.style.transform = 'translateY(0) scale(1)';
-                            e.target.style.boxShadow = '0 20px 40px rgba(20, 184, 166, 0.4), 0 0 0 1px rgba(20, 184, 166, 0.3)';
-                            e.target.style.background = 'linear-gradient(135deg, rgba(20, 184, 166, 0.9) 0%, rgba(20, 184, 166, 1) 100%)';
+                            e.target.style.backgroundColor = '#1a73e8';
+                            e.target.style.boxShadow = 'var(--elevation-2)';
                         }}
-                        >
-                            Start Free Trial
-                            <span style={{ fontSize: '1.3em' }}>→</span>
-                        </Link>
-                    </div>
+                    >
+                        Get Started Free
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M13.025 1l-2.847 2.828 6.176 6.176h-16.354v3.992h16.354l-6.176 6.176 2.847 2.828 10.975-11z"/>
+                        </svg>
+                    </Link>
                 </div>
             </section>
 
-            {/* Footer */}
+            {/* Google Style Footer */}
             <footer style={{
-                background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.95) 100%)',
-                backdropFilter: 'blur(20px)',
-                color: '#CBD5E1',
-                padding: 'var(--spacing-12) var(--spacing-6) var(--spacing-8)',
-                textAlign: 'center',
-                borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-                position: 'relative'
+                backgroundColor: '#f8f9fa',
+                borderTop: '1px solid #e8eaed',
+                padding: '48px 24px 32px',
+                textAlign: 'center'
             }}>
                 <div style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    background: 'radial-gradient(circle at 30% 100%, rgba(20, 184, 166, 0.1) 0%, transparent 50%)',
-                    pointerEvents: 'none'
-                }}></div>
-                
-                <div style={{
                     maxWidth: '1200px',
-                    margin: '0 auto',
-                    position: 'relative'
+                    margin: '0 auto'
                 }}>
                     <div style={{
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: 'var(--spacing-3)',
-                        marginBottom: 'var(--spacing-6)'
+                        gap: '12px',
+                        marginBottom: '24px'
                     }}>
                         <div style={{
-                            width: '2.5rem',
-                            height: '2.5rem',
-                            background: 'linear-gradient(135deg, rgba(20, 184, 166, 0.3) 0%, rgba(20, 184, 166, 0.6) 100%)',
-                            borderRadius: 'var(--radius-lg)',
+                            width: '32px',
+                            height: '32px',
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '1.1rem',
-                            border: '1px solid rgba(20, 184, 166, 0.2)',
-                            backdropFilter: 'blur(10px)'
+                            justifyContent: 'center'
                         }}>
-                            🗺️
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#EA4335"/>
+                                <path d="M12 8c0.55 0 1 0.45 1 1s-0.45 1-1 1-1-0.45-1-1 0.45-1 1-1z" fill="#ffffff"/>
+                            </svg>
                         </div>
                         <span style={{
-                            fontSize: 'var(--font-size-xl)',
-                            fontWeight: '700',
-                            color: '#F8FAFC',
-                            letterSpacing: '-0.01em'
+                            fontSize: '18px',
+                            fontWeight: '400',
+                            color: '#3c4043',
+                            fontFamily: 'var(--font-family-primary)'
                         }}>
                             Journey Tracker
                         </span>
                     </div>
                     
                     <p style={{
-                        color: '#94A3B8',
+                        color: '#5f6368',
                         margin: 0,
-                        fontSize: '0.95rem',
-                        lineHeight: 1.5
+                        fontSize: '14px',
+                        fontFamily: 'var(--font-family-secondary)'
                     }}>
-                        © 2024 Journey Tracker. Built with modern web technologies and OpenStreetMap.
+                        © 2024 Journey Tracker. Built with Google-inspired design principles and OpenStreetMap.
                     </p>
                 </div>
             </footer>

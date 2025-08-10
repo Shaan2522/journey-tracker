@@ -44,146 +44,319 @@ const Signup = () => {
     return (
         <div style={{
             minHeight: '100vh',
-            background: 'linear-gradient(135deg, var(--primary-600) 0%, var(--accent-coral) 100%)',
+            backgroundColor: '#f8f9fa',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: 'var(--spacing-4)'
+            padding: '24px',
+            fontFamily: 'var(--font-family-primary)'
         }}>
-            <div className="card" style={{
+            {/* Google Style Signup Card */}
+            <div style={{
                 width: '100%',
-                maxWidth: '400px',
-                animation: 'slideUp 0.5s ease-out'
+                maxWidth: '448px',
+                backgroundColor: '#ffffff',
+                borderRadius: '8px',
+                boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+                border: '1px solid #dadce0',
+                padding: '48px 40px 36px 40px'
             }}>
-                <div className="card-header" style={{ textAlign: 'center', paddingBottom: 'var(--spacing-8)' }}>
+                {/* Google Logo Area */}
+                <div style={{ textAlign: 'center', marginBottom: '32px' }}>
                     <div style={{
-                        width: '4rem',
-                        height: '4rem',
-                        backgroundColor: 'var(--accent-coral)',
-                        borderRadius: 'var(--radius-xl)',
+                        width: '48px',
+                        height: '48px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: '2rem',
-                        margin: '0 auto var(--spacing-4) auto'
+                        margin: '0 auto 16px'
                     }}>
-                        🚀
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#34A853"/>
+                            <path d="M12 8c0.55 0 1 0.45 1 1s-0.45 1-1 1-1-0.45-1-1 0.45-1 1-1z" fill="#ffffff"/>
+                        </svg>
                     </div>
-                    <h1 className="heading-xl" style={{ marginBottom: 'var(--spacing-2)' }}>
-                        Join Journey Tracker!
+                    <h1 style={{
+                        fontSize: '24px',
+                        fontWeight: '400',
+                        color: '#3c4043',
+                        marginBottom: '8px',
+                        fontFamily: 'var(--font-family-primary)'
+                    }}>
+                        Create your account
                     </h1>
-                    <p className="text-neutral-600">
-                        Create your account to start tracking journeys
+                    <p style={{
+                        fontSize: '16px',
+                        color: '#5f6368',
+                        marginBottom: '0',
+                        fontFamily: 'var(--font-family-secondary)'
+                    }}>
+                        to get started with Journey Tracker
                     </p>
                 </div>
                 
+                {/* Google Material Error Alert */}
                 {error && (
-                    <div className="alert alert-error" style={{ marginBottom: 'var(--spacing-6)' }}>
-                        <div className="alert-title">Signup Failed</div>
-                        <div className="alert-description">{error}</div>
+                    <div style={{
+                        backgroundColor: '#fce8e6',
+                        border: '1px solid #f28b82',
+                        borderRadius: '4px',
+                        padding: '16px',
+                        marginBottom: '24px',
+                        color: '#d93025',
+                        fontSize: '14px',
+                        fontFamily: 'var(--font-family-secondary)'
+                    }}>
+                        <div style={{ fontWeight: '500', marginBottom: '4px' }}>
+                            Account creation failed
+                        </div>
+                        <div>{error}</div>
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="card-content">
-                    <div style={{ marginBottom: 'var(--spacing-5)' }}>
-                        <label className="form-label" htmlFor="signup-username">
-                            Username
-                        </label>
-                        <input
-                            id="signup-username"
-                            type="text"
-                            className="form-input"
-                            placeholder="Choose a username"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            required
-                        />
+                {/* Google Material Form */}
+                <form onSubmit={handleSubmit}>
+                    {/* Username Field */}
+                    <div style={{ marginBottom: '24px' }}>
+                        <div style={{
+                            position: 'relative',
+                            border: '1px solid #dadce0',
+                            borderRadius: '4px',
+                            padding: '12px 16px',
+                            fontSize: '16px',
+                            fontFamily: 'var(--font-family-secondary)',
+                            transition: 'border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out'
+                        }}>
+                            <input
+                                id="username"
+                                type="text"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                required
+                                placeholder="Choose a username"
+                                style={{
+                                    width: '100%',
+                                    border: 'none',
+                                    outline: 'none',
+                                    fontSize: '16px',
+                                    fontFamily: 'var(--font-family-secondary)',
+                                    color: '#3c4043',
+                                    backgroundColor: 'transparent'
+                                }}
+                                onFocus={(e) => {
+                                    e.target.parentElement.style.borderColor = '#1a73e8';
+                                    e.target.parentElement.style.boxShadow = '0 0 0 1px #1a73e8';
+                                }}
+                                onBlur={(e) => {
+                                    e.target.parentElement.style.borderColor = '#dadce0';
+                                    e.target.parentElement.style.boxShadow = 'none';
+                                }}
+                            />
+                        </div>
+                        <div style={{
+                            fontSize: '12px',
+                            color: '#5f6368',
+                            marginTop: '6px',
+                            fontFamily: 'var(--font-family-secondary)'
+                        }}>
+                            This will be your unique identifier
+                        </div>
                     </div>
                     
-                    <div style={{ marginBottom: 'var(--spacing-5)' }}>
-                        <label className="form-label" htmlFor="signup-password">
-                            Password
-                        </label>
-                        <input
-                            id="signup-password"
-                            type="password"
-                            className="form-input"
-                            placeholder="Create a password (min 6 characters)"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
+                    {/* Password Field */}
+                    <div style={{ marginBottom: '24px' }}>
+                        <div style={{
+                            position: 'relative',
+                            border: '1px solid #dadce0',
+                            borderRadius: '4px',
+                            padding: '12px 16px',
+                            fontSize: '16px',
+                            fontFamily: 'var(--font-family-secondary)',
+                            transition: 'border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out'
+                        }}>
+                            <input
+                                id="password"
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                placeholder="Create a strong password"
+                                style={{
+                                    width: '100%',
+                                    border: 'none',
+                                    outline: 'none',
+                                    fontSize: '16px',
+                                    fontFamily: 'var(--font-family-secondary)',
+                                    color: '#3c4043',
+                                    backgroundColor: 'transparent'
+                                }}
+                                onFocus={(e) => {
+                                    e.target.parentElement.style.borderColor = '#1a73e8';
+                                    e.target.parentElement.style.boxShadow = '0 0 0 1px #1a73e8';
+                                }}
+                                onBlur={(e) => {
+                                    e.target.parentElement.style.borderColor = '#dadce0';
+                                    e.target.parentElement.style.boxShadow = 'none';
+                                }}
+                            />
+                        </div>
+                        <div style={{
+                            fontSize: '12px',
+                            color: '#5f6368',
+                            marginTop: '6px',
+                            fontFamily: 'var(--font-family-secondary)'
+                        }}>
+                            Use 6+ characters (letters, numbers & symbols)
+                        </div>
                     </div>
                     
-                    <div style={{ marginBottom: 'var(--spacing-5)' }}>
-                        <label className="form-label" htmlFor="confirm-password">
-                            Confirm Password
-                        </label>
-                        <input
-                            id="confirm-password"
-                            type="password"
-                            className="form-input"
-                            placeholder="Confirm your password"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            required
-                        />
+                    {/* Confirm Password Field */}
+                    <div style={{ marginBottom: '32px' }}>
+                        <div style={{
+                            position: 'relative',
+                            border: '1px solid #dadce0',
+                            borderRadius: '4px',
+                            padding: '12px 16px',
+                            fontSize: '16px',
+                            fontFamily: 'var(--font-family-secondary)',
+                            transition: 'border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out'
+                        }}>
+                            <input
+                                id="confirmPassword"
+                                type="password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                required
+                                placeholder="Confirm your password"
+                                style={{
+                                    width: '100%',
+                                    border: 'none',
+                                    outline: 'none',
+                                    fontSize: '16px',
+                                    fontFamily: 'var(--font-family-secondary)',
+                                    color: '#3c4043',
+                                    backgroundColor: 'transparent'
+                                }}
+                                onFocus={(e) => {
+                                    e.target.parentElement.style.borderColor = '#1a73e8';
+                                    e.target.parentElement.style.boxShadow = '0 0 0 1px #1a73e8';
+                                }}
+                                onBlur={(e) => {
+                                    e.target.parentElement.style.borderColor = '#dadce0';
+                                    e.target.parentElement.style.boxShadow = 'none';
+                                }}
+                            />
+                        </div>
                     </div>
                     
-                    <button 
-                        type="submit" 
-                        className={`btn ${loading ? 'btn-disabled' : 'btn-accent'} btn-lg`}
-                        disabled={loading}
-                        style={{ 
-                            width: '100%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: 'var(--spacing-2)'
-                        }}
-                    >
-                        {loading && (
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ animation: 'spin 1s linear infinite' }}>
-                                <path d="M12 2V6M12 18V22M6 12H2M22 12H18M19.07 19.07L16.24 16.24M19.07 4.93L16.24 7.76M4.93 19.07L7.76 16.24M4.93 4.93L7.76 7.76" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                            </svg>
-                        )}
-                        {loading ? 'Creating Account...' : 'Create Account'}
-                    </button>
+                    {/* Action Buttons - Google Style */}
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        gap: '16px',
+                        flexWrap: 'wrap'
+                    }}>
+                        <Link 
+                            to="/login"
+                            style={{
+                                color: '#1a73e8',
+                                textDecoration: 'none',
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                padding: '8px',
+                                borderRadius: '4px',
+                                transition: 'background-color var(--transition-standard)',
+                                fontFamily: 'var(--font-family-primary)'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.target.style.backgroundColor = 'rgba(26, 115, 232, 0.04)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.target.style.backgroundColor = 'transparent';
+                            }}
+                        >
+                            Sign in instead
+                        </Link>
+                        
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            style={{
+                                backgroundColor: loading ? '#f8f9fa' : '#34a853',
+                                color: loading ? '#5f6368' : 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                padding: '10px 24px',
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                cursor: loading ? 'not-allowed' : 'pointer',
+                                transition: 'all var(--transition-standard)',
+                                fontFamily: 'var(--font-family-primary)',
+                                textTransform: 'none',
+                                boxShadow: loading ? 'none' : 'var(--elevation-2)'
+                            }}
+                            onMouseEnter={(e) => {
+                                if (!loading) {
+                                    e.target.style.backgroundColor = '#2d8f3f';
+                                    e.target.style.boxShadow = 'var(--elevation-4)';
+                                }
+                            }}
+                            onMouseLeave={(e) => {
+                                if (!loading) {
+                                    e.target.style.backgroundColor = '#34a853';
+                                    e.target.style.boxShadow = 'var(--elevation-2)';
+                                }
+                            }}
+                        >
+                            {loading ? 'Creating account...' : 'Create account'}
+                        </button>
+                    </div>
                 </form>
                 
-                <div className="card-footer" style={{ textAlign: 'center', paddingTop: 'var(--spacing-6)' }}>
-                    <p className="text-neutral-600" style={{ marginBottom: 'var(--spacing-3)' }}>
-                        Already have an account?{' '}
-                        <Link 
-                            to="/login" 
-                            style={{ 
-                                color: 'var(--primary-teal)', 
-                                textDecoration: 'none',
-                                fontWeight: 'var(--font-weight-semibold)',
-                                transition: 'color var(--transition-normal)'
-                            }}
-                            onMouseEnter={(e) => e.target.style.color = 'var(--primary-700)'}
-                            onMouseLeave={(e) => e.target.style.color = 'var(--primary-teal)'}
-                        >
-                            Sign in here
-                        </Link>
-                    </p>
-                    
+                {/* Terms of Service - Google Style */}
+                <div style={{
+                    marginTop: '32px',
+                    paddingTop: '24px',
+                    borderTop: '1px solid #e8eaed',
+                    fontSize: '12px',
+                    color: '#5f6368',
+                    lineHeight: '1.4',
+                    fontFamily: 'var(--font-family-secondary)'
+                }}>
+                    By creating an account, you agree to our Terms of Service and acknowledge that you have read our Privacy Policy.
+                </div>
+                
+                {/* Bottom Links */}
+                <div style={{
+                    marginTop: '16px',
+                    textAlign: 'center'
+                }}>
                     <Link 
-                        to="/" 
-                        className="text-neutral-500"
-                        style={{ 
+                        to="/"
+                        style={{
+                            color: '#5f6368',
                             textDecoration: 'none',
-                            fontSize: 'var(--font-size-sm)',
+                            fontSize: '14px',
+                            fontFamily: 'var(--font-family-secondary)',
                             display: 'inline-flex',
                             alignItems: 'center',
-                            gap: 'var(--spacing-1)',
-                            transition: 'color var(--transition-normal)'
+                            gap: '8px',
+                            padding: '8px',
+                            borderRadius: '4px',
+                            transition: 'color var(--transition-standard)'
                         }}
-                        onMouseEnter={(e) => e.target.style.color = 'var(--neutral-700)'}
-                        onMouseLeave={(e) => e.target.style.color = 'var(--neutral-500)'}
+                        onMouseEnter={(e) => {
+                            e.target.style.color = '#1a73e8';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.target.style.color = '#5f6368';
+                        }}
                     >
-                        ← Back to Home
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                        </svg>
+                        Back to homepage
                     </Link>
                 </div>
             </div>

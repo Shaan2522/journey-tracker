@@ -311,62 +311,134 @@ const Dashboard = () => {
     const mapCenter = currentLocation || { lat: 40.730610, lng: -73.935242 };
 
     return (
-        <div style={{ minHeight: '100vh', backgroundColor: 'var(--neutral-50)' }}>
+        <div style={{ minHeight: '100vh', backgroundColor: '#f8f9fa', fontFamily: 'var(--font-family-primary)' }}>
             <Header />
-            <div className="container" style={{ paddingTop: 'var(--spacing-8)' }}>
+            <div style={{ 
+                maxWidth: '1200px',
+                margin: '0 auto',
+                padding: '24px',
+                paddingTop: '88px'
+            }}>
                 <div style={{ 
-                    marginBottom: 'var(--spacing-8)',
+                    marginBottom: '24px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     flexWrap: 'wrap',
-                    gap: 'var(--spacing-4)'
+                    gap: '16px'
                 }}>
-                    <h1 className="heading-lg"></h1>
+                    <h1 style={{
+                        fontSize: '28px',
+                        fontWeight: '400',
+                        color: '#3c4043',
+                        margin: '0',
+                        fontFamily: 'var(--font-family-primary)'
+                    }}>Journey Tracker</h1>
                     {isConnected && (
-                        <div className="badge" style={{ 
-                            backgroundColor: 'var(--success-100)', 
-                            color: 'var(--success-700)',
-                            border: '1px solid var(--success-200)'
+                        <div style={{ 
+                            backgroundColor: '#e8f5e8',
+                            color: '#137333',
+                            border: '1px solid #34a853',
+                            borderRadius: '16px',
+                            padding: '6px 12px',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            fontFamily: 'var(--font-family-secondary)'
                         }}>
-                            🟢 Connected
+                            <div style={{
+                                width: '8px',
+                                height: '8px',
+                                backgroundColor: '#34a853',
+                                borderRadius: '50%'
+                            }}></div>
+                            Connected
                         </div>
                     )}
                 </div>
                 
                 {locationError && (
-                    <div className="alert alert-warning" style={{ marginBottom: 'var(--spacing-8)' }}>
-                        <span style={{ fontSize: '1.25rem' }}>⚠️</span>
+                    <div style={{ 
+                        backgroundColor: '#fef7e0',
+                        border: '1px solid #fbbc04',
+                        borderRadius: '8px',
+                        padding: '16px',
+                        marginBottom: '24px',
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '12px'
+                    }}>
+                        <div style={{ 
+                            width: '20px',
+                            height: '20px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="#ea8600">
+                                <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                            </svg>
+                        </div>
                         <div>
-                            <div className="alert-title">Location Notice</div>
-                            <div className="alert-description">{locationError}</div>
+                            <div style={{
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                color: '#3c4043',
+                                marginBottom: '4px',
+                                fontFamily: 'var(--font-family-primary)'
+                            }}>Location Notice</div>
+                            <div style={{
+                                fontSize: '14px',
+                                color: '#5f6368',
+                                fontFamily: 'var(--font-family-secondary)'
+                            }}>{locationError}</div>
                         </div>
                     </div>
                 )}
                 
                 {!journey ? (
-                    <div className="card" style={{ 
+                    <div style={{ 
+                        backgroundColor: '#ffffff',
+                        borderRadius: '8px',
+                        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+                        border: '1px solid #dadce0',
                         textAlign: 'center', 
                         maxWidth: '700px', 
                         margin: '0 auto',
-                        marginBottom: 'var(--spacing-8)'
+                        marginBottom: '24px',
+                        padding: '48px 40px'
                     }}>
-                        <div className="card-header" style={{ textAlign: 'center' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
                             <div style={{
-                                width: '3rem',
-                                height: '3rem',
-                                backgroundColor: 'var(--primary-teal)',
-                                borderRadius: 'var(--radius-full)',
+                                width: '64px',
+                                height: '64px',
+                                backgroundColor: '#1a73e8',
+                                borderRadius: '50%',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                fontSize: '1.5rem',
-                                margin: '0 auto var(--spacing-4) auto'
+                                fontSize: '24px',
+                                margin: '0 auto 16px auto'
                             }}>
-                                🚀
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                </svg>
                             </div>
-                            <h2 className="card-title">Start Your Journey</h2>
-                            <p className="card-description">
+                            <h2 style={{
+                                fontSize: '24px',
+                                fontWeight: '400',
+                                color: '#3c4043',
+                                marginBottom: '8px',
+                                fontFamily: 'var(--font-family-primary)'
+                            }}>Start Your Journey</h2>
+                            <p style={{
+                                fontSize: '16px',
+                                color: '#5f6368',
+                                marginBottom: '0',
+                                fontFamily: 'var(--font-family-secondary)'
+                            }}>
                                 Create a new journey or join an existing one to start tracking your group's location
                             </p>
                         </div>
