@@ -96,84 +96,111 @@ const DestinationSearch = ({ onDestinationSelect, currentLocation }) => {
     };
 
     return (
-        <div style={{ position: 'relative', marginBottom: '15px' }} ref={searchRef}>
+        <div style={{ position: 'relative', marginBottom: 'var(--spacing-4)' }} ref={searchRef}>
             <div style={{ position: 'relative' }}>
                 <input
                     type="text"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="🔍 Search for destination (e.g., Central Park, Restaurant name...)"
+                    className="form-input"
                     style={{
-                        width: '100%',
-                        padding: '12px 40px 12px 16px',
-                        border: '2px solid #e0e6ed',
-                        borderRadius: '8px',
-                        fontSize: '14px',
-                        outline: 'none',
-                        transition: 'border-color 0.2s',
-                        boxSizing: 'border-box'
+                        paddingRight: '3rem'
                     }}
                     onFocus={() => setShowResults(results.length > 0)}
                 />
                 {isLoading && (
                     <div style={{
                         position: 'absolute',
-                        right: '12px',
+                        right: 'var(--spacing-3)',
                         top: '50%',
                         transform: 'translateY(-50%)',
-                        fontSize: '12px',
-                        color: '#6c757d'
+                        fontSize: 'var(--font-size-sm)',
+                        color: 'var(--neutral-500)',
+                        animation: 'spin 1s linear infinite'
                     }}>
-                        🔄
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2V6M12 18V22M6 12H2M22 12H18M19.07 19.07L16.24 16.24M19.07 4.93L16.24 7.76M4.93 19.07L7.76 16.24M4.93 4.93L7.76 7.76" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                        </svg>
                     </div>
                 )}
             </div>
 
             {showResults && results.length > 0 && (
-                <div style={{
+                <div className="dropdown-menu" style={{
                     position: 'absolute',
                     top: '100%',
                     left: 0,
                     right: 0,
+                    marginTop: 'var(--spacing-1)',
                     backgroundColor: 'white',
-                    border: '1px solid #e0e6ed',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                    border: '1px solid var(--neutral-200)',
+                    borderRadius: 'var(--radius-xl)',
+                    boxShadow: 'var(--shadow-lg)',
                     zIndex: 1000,
                     maxHeight: '300px',
-                    overflowY: 'auto'
+                    overflowY: 'auto',
+                    overflow: 'hidden'
                 }}>
                     {results.map((result, index) => (
                         <div
                             key={result.id}
                             onClick={() => handleSelectLocation(result)}
                             style={{
-                                padding: '12px 16px',
-                                borderBottom: index < results.length - 1 ? '1px solid #f0f0f0' : 'none',
+                                padding: 'var(--spacing-3) var(--spacing-4)',
+                                borderBottom: index < results.length - 1 ? '1px solid var(--neutral-100)' : 'none',
                                 cursor: 'pointer',
-                                transition: 'background-color 0.2s',
-                                ':hover': { backgroundColor: '#f8f9fa' }
+                                transition: 'all var(--transition-normal)',
+                                display: 'flex',
+                                alignItems: 'flex-start',
+                                gap: 'var(--spacing-2)'
                             }}
-                            onMouseEnter={(e) => e.target.style.backgroundColor = '#f8f9fa'}
-                            onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                            onMouseEnter={(e) => {
+                                e.target.style.backgroundColor = 'var(--primary-50)';
+                                e.target.style.borderColor = 'var(--primary-200)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.target.style.backgroundColor = 'transparent';
+                                e.target.style.borderColor = 'transparent';
+                            }}
                         >
                             <div style={{ 
-                                fontWeight: '500', 
-                                fontSize: '14px',
-                                marginBottom: '4px',
-                                color: '#333'
+                                fontSize: 'var(--font-size-lg)',
+                                marginTop: '2px'
                             }}>
-                                📍 {result.name.split(',')[0]}
+                                📍
                             </div>
-                            <div style={{ 
-                                fontSize: '12px', 
-                                color: '#6c757d',
-                                marginBottom: '2px'
-                            }}>
-                                {result.name}
-                            </div>
-                            <div style={{ fontSize: '11px', color: '#28a745' }}>
-                                {calculateDistance(result)}
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                                <div style={{ 
+                                    fontWeight: 'var(--font-weight-medium)', 
+                                    fontSize: 'var(--font-size-sm)',
+                                    marginBottom: 'var(--spacing-1)',
+                                    color: 'var(--neutral-900)',
+                                    lineHeight: 1.4
+                                }}>
+                                    {result.name.split(',')[0]}
+                                </div>
+                                <div style={{ 
+                                    fontSize: 'var(--font-size-xs)', 
+                                    color: 'var(--neutral-600)',
+                                    marginBottom: 'var(--spacing-1)',
+                                    lineHeight: 1.3,
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap'
+                                }}>
+                                    {result.name}
+                                </div>
+                                <div className="badge badge-sm" style={{ 
+                                    fontSize: 'var(--font-size-xs)', 
+                                    backgroundColor: 'var(--success-100)',
+                                    color: 'var(--success-700)',
+                                    border: '1px solid var(--success-200)',
+                                    padding: '2px var(--spacing-2)',
+                                    display: 'inline-block'
+                                }}>
+                                    {calculateDistance(result)}
+                                </div>
                             </div>
                         </div>
                     ))}
@@ -186,17 +213,36 @@ const DestinationSearch = ({ onDestinationSelect, currentLocation }) => {
                     top: '100%',
                     left: 0,
                     right: 0,
+                    marginTop: 'var(--spacing-1)',
                     backgroundColor: 'white',
-                    border: '1px solid #e0e6ed',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                    border: '1px solid var(--neutral-200)',
+                    borderRadius: 'var(--radius-xl)',
+                    boxShadow: 'var(--shadow-lg)',
                     zIndex: 1000,
-                    padding: '16px',
+                    padding: 'var(--spacing-6)',
                     textAlign: 'center',
-                    color: '#6c757d',
-                    fontSize: '14px'
                 }}>
-                    No locations found for "{query}"
+                    <div style={{ 
+                        color: 'var(--neutral-400)',
+                        fontSize: 'var(--font-size-2xl)',
+                        marginBottom: 'var(--spacing-2)'
+                    }}>
+                        🔍
+                    </div>
+                    <div style={{
+                        color: 'var(--neutral-600)',
+                        fontSize: 'var(--font-size-sm)',
+                        fontWeight: 'var(--font-weight-medium)'
+                    }}>
+                        No locations found
+                    </div>
+                    <div style={{
+                        color: 'var(--neutral-500)',
+                        fontSize: 'var(--font-size-xs)',
+                        marginTop: 'var(--spacing-1)'
+                    }}>
+                        Try searching for "{query}" with more details
+                    </div>
                 </div>
             )}
         </div>

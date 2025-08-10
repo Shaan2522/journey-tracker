@@ -16,6 +16,9 @@ const Dashboard = () => {
     const [travelTimes, setTravelTimes] = useState({});
     const [isConnected, setIsConnected] = useState(false);
     const [destination, setDestination] = useState(null);
+    const [selectedParticipantId, setSelectedParticipantId] = useState(null);
+    const [participantRoute, setParticipantRoute] = useState(null);
+    const [loadingRoute, setLoadingRoute] = useState(false);
     const locationIntervalRef = useRef(null);
 
     useEffect(() => {
@@ -257,138 +260,279 @@ const Dashboard = () => {
         }
     };
 
+    // Handle participant click to show route to destination
+    const handleParticipantClick = async (participantId) => {
+        if (!journey || !journey.destination || !locationUpdates[participantId]) {
+            return;
+        }
+
+        setLoadingRoute(true);
+        
+        try {
+            // If same participant is clicked again, hide route
+            if (selectedParticipantId === participantId) {
+                setSelectedParticipantId(null);
+                setParticipantRoute(null);
+                setLoadingRoute(false);
+                return;
+            }
+
+            const participantLocation = locationUpdates[participantId];
+            const destinationCoords = {
+                lat: journey.destination.coordinates[1],
+                lng: journey.destination.coordinates[0]
+            };
+
+            const participantCoords = {
+                lat: participantLocation.latitude,
+                lng: participantLocation.longitude
+            };
+
+            // Get route details from map service
+            const routeDetails = await mapService.getRouteDetails(
+                participantCoords,
+                destinationCoords
+            );
+
+            if (routeDetails) {
+                setSelectedParticipantId(participantId);
+                setParticipantRoute(routeDetails.coordinates);
+            } else {
+                alert('Unable to calculate route for this participant');
+            }
+        } catch (error) {
+            console.error('Error fetching participant route:', error);
+            alert('Failed to load route. Please try again.');
+        } finally {
+            setLoadingRoute(false);
+        }
+    };
+
     const mapCenter = currentLocation || { lat: 40.730610, lng: -73.935242 };
 
     return (
-        <div style={{ minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
+        <div style={{ minHeight: '100vh', backgroundColor: 'var(--neutral-50)' }}>
             <Header />
-            <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-                <h2 style={{ marginBottom: '20px', color: '#333' }}>Dashboard</h2>
-                {locationError && <p style={{ color: 'orange', backgroundColor: '#fff3cd', padding: '10px', borderRadius: '5px' }}>{locationError}</p>}
+            <div className="container" style={{ paddingTop: 'var(--spacing-8)' }}>
+                <div style={{ 
+                    marginBottom: 'var(--spacing-8)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: 'var(--spacing-4)'
+                }}>
+                    <h1 className="heading-lg"></h1>
+                    {isConnected && (
+                        <div className="badge" style={{ 
+                            backgroundColor: 'var(--success-100)', 
+                            color: 'var(--success-700)',
+                            border: '1px solid var(--success-200)'
+                        }}>
+                            🟢 Connected
+                        </div>
+                    )}
+                </div>
+                
+                {locationError && (
+                    <div className="alert alert-warning" style={{ marginBottom: 'var(--spacing-8)' }}>
+                        <span style={{ fontSize: '1.25rem' }}>⚠️</span>
+                        <div>
+                            <div className="alert-title">Location Notice</div>
+                            <div className="alert-description">{locationError}</div>
+                        </div>
+                    </div>
+                )}
                 
                 {!journey ? (
-                    <div style={{
-                        backgroundColor: 'white',
-                        padding: '30px',
-                        borderRadius: '10px',
-                        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-                        textAlign: 'center'
+                    <div className="card" style={{ 
+                        textAlign: 'center', 
+                        maxWidth: '700px', 
+                        margin: '0 auto',
+                        marginBottom: 'var(--spacing-8)'
                     }}>
-                        <h3 style={{ marginBottom: '20px', color: '#333' }}>Start Your Journey</h3>
-                        <p style={{ marginBottom: '20px', color: '#666' }}>
-                            Current Location: {currentLocation ? `${currentLocation.lat.toFixed(4)}, ${currentLocation.lng.toFixed(4)}` : 'Loading...'}
-                        </p>
-                        
-                        {/* Destination Selection */}
-                        <div style={{ marginBottom: '20px', textAlign: 'left' }}>
-                            <h4 style={{ marginBottom: '10px', color: '#333' }}>🎯 Select Destination</h4>
-                            <p style={{ fontSize: '12px', color: '#666', marginBottom: '10px' }}>
-                                Search for a location or click anywhere on the map to set your destination
+                        <div className="card-header" style={{ textAlign: 'center' }}>
+                            <div style={{
+                                width: '3rem',
+                                height: '3rem',
+                                backgroundColor: 'var(--primary-teal)',
+                                borderRadius: 'var(--radius-full)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '1.5rem',
+                                margin: '0 auto var(--spacing-4) auto'
+                            }}>
+                                🚀
+                            </div>
+                            <h2 className="card-title">Start Your Journey</h2>
+                            <p className="card-description">
+                                Create a new journey or join an existing one to start tracking your group's location
                             </p>
-                            <DestinationSearch 
-                                onDestinationSelect={handleDestinationSelect}
-                                currentLocation={currentLocation}
-                            />
-                            {destination && (
-                                <div style={{
-                                    backgroundColor: '#e8f5e8',
-                                    padding: '10px',
-                                    borderRadius: '6px',
-                                    marginTop: '10px',
-                                    border: '1px solid #28a745'
+                        </div>
+                        
+                        <div className="card-content" style={{ textAlign: 'left' }}>
+                            {/* Current Location Display */}
+                            <div style={{ 
+                                padding: 'var(--spacing-4)',
+                                backgroundColor: 'var(--primary-50)',
+                                border: '1px solid var(--primary-200)',
+                                borderRadius: 'var(--radius-lg)',
+                                marginBottom: 'var(--spacing-6)',
+                                textAlign: 'center'
+                            }}>
+                                <div style={{ 
+                                    fontSize: 'var(--font-size-sm)',
+                                    color: 'var(--primary-600)',
+                                    marginBottom: 'var(--spacing-1)'
                                 }}>
-                                    <div style={{ fontSize: '14px', color: '#28a745', fontWeight: 'bold' }}>
-                                        ✅ Destination Selected
-                                    </div>
-                                    <div style={{ fontSize: '12px', color: '#666', marginTop: '2px' }}>
-                                        📍 {destination.lat.toFixed(4)}, {destination.lng.toFixed(4)}
-                                    </div>
+                                    📍 Current Location
                                 </div>
-                            )}
-                        </div>
-                        
-                        <div style={{ marginBottom: '30px' }}>
-                            <button 
-                                onClick={handleCreateJourney} 
-                                disabled={!currentLocation || !destination}
-                                style={{
-                                    backgroundColor: (!currentLocation || !destination) ? '#ccc' : '#28a745',
-                                    color: 'white',
-                                    padding: '15px 30px',
-                                    border: 'none',
-                                    borderRadius: '8px',
-                                    fontSize: '16px',
-                                    fontWeight: 'bold',
-                                    cursor: (!currentLocation || !destination) ? 'not-allowed' : 'pointer',
-                                    marginBottom: '20px',
-                                    boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
-                                }}
-                            >
-                                🚀 Create New Journey {!destination && '(Select destination first)'}
-                            </button>
-                        </div>
-                        
-                        <div style={{ 
-                            borderTop: '1px solid #eee', 
-                            paddingTop: '20px',
-                            marginTop: '20px'
-                        }}>
-                            <h4 style={{ marginBottom: '15px', color: '#333' }}>Or Join an Existing Journey</h4>
-                            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', alignItems: 'center' }}>
-                                <input
-                                    type="text"
-                                    placeholder="Enter Journey Code"
-                                    value={code}
-                                    onChange={(e) => setCode(e.target.value)}
-                                    style={{
-                                        padding: '12px',
-                                        border: '2px solid #ddd',
-                                        borderRadius: '8px',
-                                        fontSize: '16px',
-                                        width: '200px'
-                                    }}
+                                <div className="text-sm text-neutral-600">
+                                    {currentLocation ? 
+                                        `${currentLocation.lat.toFixed(4)}, ${currentLocation.lng.toFixed(4)}` : 
+                                        'Detecting location...'
+                                    }
+                                </div>
+                            </div>
+                            
+                            {/* Destination Selection */}
+                            <div style={{ marginBottom: 'var(--spacing-6)' }}>
+                                <label className="form-label">
+                                    🎯 Select Destination
+                                </label>
+                                <p className="form-description">
+                                    Search for a location or click anywhere on the map to set your destination
+                                </p>
+                                <DestinationSearch 
+                                    onDestinationSelect={handleDestinationSelect}
+                                    currentLocation={currentLocation}
                                 />
+                                {destination && (
+                                    <div className="alert alert-success" style={{ 
+                                        marginTop: 'var(--spacing-3)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: 'var(--spacing-2)'
+                                    }}>
+                                        <span style={{ fontSize: '1.25rem' }}>✅</span>
+                                        <div>
+                                            <div className="alert-title">Destination Selected</div>
+                                            <div className="alert-description">
+                                                📍 {destination.lat.toFixed(4)}, {destination.lng.toFixed(4)}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                            
+                            <div style={{ marginBottom: 'var(--spacing-8)' }}>
                                 <button 
-                                    onClick={handleJoinJourney}
-                                    disabled={!code.trim()}
-                                    style={{
-                                        backgroundColor: !code.trim() ? '#ccc' : '#007bff',
-                                        color: 'white',
-                                        padding: '12px 20px',
-                                        border: 'none',
-                                        borderRadius: '8px',
-                                        fontSize: '16px',
-                                        fontWeight: 'bold',
-                                        cursor: !code.trim() ? 'not-allowed' : 'pointer'
+                                    className={`btn ${(!currentLocation || !destination) ? 'btn-disabled' : 'btn-primary'} btn-lg`}
+                                    onClick={handleCreateJourney} 
+                                    disabled={!currentLocation || !destination}
+                                    style={{ 
+                                        width: '100%',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: 'var(--spacing-2)'
                                     }}
                                 >
-                                    Join Journey
+                                    <span style={{ fontSize: '1.25rem' }}>🚀</span>
+                                    Create New Journey {!destination && '(Select destination first)'}
                                 </button>
+                            </div>
+                            
+                            <div style={{ 
+                                borderTop: '1px solid var(--neutral-200)', 
+                                paddingTop: 'var(--spacing-6)'
+                            }}>
+                                <h3 className="heading-sm" style={{ 
+                                    textAlign: 'center',
+                                    marginBottom: 'var(--spacing-4)'
+                                }}>
+                                    Or Join an Existing Journey
+                                </h3>
+                                <div style={{ 
+                                    display: 'flex', 
+                                    gap: 'var(--spacing-3)',
+                                    alignItems: 'flex-end'
+                                }}>
+                                    <div style={{ flex: 1 }}>
+                                        <label className="form-label" htmlFor="journey-code">
+                                            Journey Code
+                                        </label>
+                                        <input
+                                            id="journey-code"
+                                            type="text"
+                                            className="form-input"
+                                            placeholder="Enter Journey Code"
+                                            value={code}
+                                            onChange={(e) => setCode(e.target.value)}
+                                        />
+                                    </div>
+                                    <button 
+                                        className={`btn ${!code.trim() ? 'btn-disabled' : 'btn-secondary'}`}
+                                        onClick={handleJoinJourney}
+                                        disabled={!code.trim()}
+                                    >
+                                        Join Journey
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 ) : (
-                    <div style={{
-                        backgroundColor: 'white',
-                        borderRadius: '10px',
+                    <div className="card" style={{ 
+                        padding: 0, 
                         overflow: 'hidden',
-                        boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+                        marginBottom: 'var(--spacing-8)'
                     }}>
                         <div style={{ 
-                            backgroundColor: '#667eea', 
+                            background: 'linear-gradient(135deg, var(--primary-600) 0%, var(--accent-coral) 100%)',
                             color: 'white', 
-                            padding: '20px',
+                            padding: 'var(--spacing-8)',
                             textAlign: 'center'
                         }}>
-                            <h3 style={{ margin: '0 0 10px 0' }}>Journey: {journey.code}</h3>
-                            <p style={{ margin: 0, opacity: '0.9' }}>Share this code with others to join your journey!</p>
-                            <p style={{ margin: '10px 0 0 0', fontSize: '14px' }}>
-                                Connection Status: {isConnected ? '🟢 Connected' : '🔴 Disconnected'}
+                            <div style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: '3rem',
+                                height: '3rem',
+                                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                borderRadius: 'var(--radius-full)',
+                                marginBottom: 'var(--spacing-4)',
+                                fontSize: '1.5rem'
+                            }}>
+                                🗺️
+                            </div>
+                            <h2 style={{ 
+                                margin: '0 0 var(--spacing-2) 0', 
+                                fontSize: 'var(--font-size-3xl)', 
+                                fontWeight: 'var(--font-weight-bold)' 
+                            }}>
+                                Journey: {journey.code}
+                            </h2>
+                            <p style={{ 
+                                margin: '0 0 var(--spacing-4) 0', 
+                                opacity: '0.9',
+                                fontSize: 'var(--font-size-base)'
+                            }}>
+                                Share this code with others to join your journey!
                             </p>
+                            <div className="badge" style={{ 
+                                backgroundColor: isConnected ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)',
+                                color: isConnected ? 'var(--success-100)' : 'var(--error-100)',
+                                border: `1px solid ${isConnected ? 'rgba(34, 197, 94, 0.4)' : 'rgba(239, 68, 68, 0.4)'}`
+                            }}>
+                                {isConnected ? '🟢 Connected' : '🔴 Disconnected'}
+                            </div>
                         </div>
                         
-                        <div style={{ display: 'flex', gap: '0' }}>
-                            <div style={{ flex: 2, padding: '20px' }}>
+                        <div className="dashboard-layout">
+                            <div className="map-section">
                                 <Map 
                                     center={mapCenter} 
                                     zoom={15} 
@@ -401,97 +545,182 @@ const Dashboard = () => {
                                     } : destination}
                                     isLeader={isGroupLeader()}
                                     onDestinationSelect={handleDestinationSelect}
-                                    showRoute={journey && currentLocation && (journey.destination || destination)}
+                                    showRoute={Boolean(currentLocation && (journey?.destination || destination))}
+                                    routeCoordinates={participantRoute}
+                                    selectedParticipantId={selectedParticipantId}
                                 />
                             </div>
                             
-                            <div style={{ 
-                                flex: 1, 
-                                padding: '20px',
-                                backgroundColor: '#f8f9fa',
-                                borderLeft: '1px solid #ddd',
-                                maxHeight: '500px', 
-                                overflowY: 'auto'
-                            }}>
-                                <h4 style={{ margin: '0 0 15px 0', color: '#333' }}>
+                            <div className="sidebar-section">
+                                <h3 className="heading-md" style={{ marginBottom: 'var(--spacing-4)' }}>
                                     Participants ({participants.length})
-                                </h4>
-                                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                                    {participants.map((participant) => (
-                                        <li key={participant._id} style={{ 
-                                            padding: '15px', 
-                                            margin: '0 0 10px 0', 
-                                            backgroundColor: 'white', 
-                                            borderRadius: '8px',
-                                            border: '1px solid #eee',
-                                            boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                                </h3>
+                                
+                                <div style={{ flex: 1, marginBottom: 'var(--spacing-6)' }}>
+                                    {participants.length === 0 ? (
+                                        <div style={{
+                                            textAlign: 'center',
+                                            padding: 'var(--spacing-8)',
+                                            color: 'var(--neutral-500)'
                                         }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
-                                                <strong style={{ color: '#333' }}>{participant.username}</strong>
-                                                <span style={{ 
-                                                    color: participant.role === 'Group Leader' ? '#e74c3c' : '#27ae60',
-                                                    fontWeight: 'bold',
-                                                    marginLeft: '8px',
-                                                    fontSize: '18px'
-                                                }}>
-                                                    {participant.role === 'Group Leader' ? '👑' : '👤'}
-                                                </span>
-                                            </div>
-                                            <div style={{ fontSize: '12px', color: '#666', marginBottom: '8px' }}>
-                                                {participant.role}
-                                            </div>
-                                            
-                                            {locationUpdates[participant._id] && (
-                                                <div style={{ fontSize: '11px', color: '#888', marginBottom: '5px' }}>
-                                                    Last update: {new Date(locationUpdates[participant._id].timestamp).toLocaleTimeString()}
-                                                </div>
-                                            )}
-                                            
-                                            {travelTimes[participant._id] && (
+                                            <div style={{ fontSize: '2rem', marginBottom: 'var(--spacing-2)' }}>👥</div>
+                                            <p className="text-sm">No participants yet</p>
+                                        </div>
+                                    ) : (
+                                        participants.map((participant) => (
+                                            <div 
+                                                key={participant._id} 
+                                                className="card" 
+                                                onClick={() => handleParticipantClick(participant._id)}
+                                                style={{ 
+                                                    marginBottom: 'var(--spacing-3)',
+                                                    padding: 'var(--spacing-4)',
+                                                    border: selectedParticipantId === participant._id 
+                                                        ? '2px solid var(--primary-teal)' 
+                                                        : '1px solid var(--neutral-200)',
+                                                    cursor: journey && journey.destination && locationUpdates[participant._id] 
+                                                        ? 'pointer' 
+                                                        : 'default',
+                                                    transition: 'all var(--transition-normal)',
+                                                    position: 'relative'
+                                                }}
+                                                onMouseEnter={(e) => {
+                                                    if (journey && journey.destination && locationUpdates[participant._id]) {
+                                                        e.target.style.boxShadow = 'var(--shadow-lg)';
+                                                        e.target.style.transform = 'translateY(-2px)';
+                                                    }
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.target.style.boxShadow = '';
+                                                    e.target.style.transform = 'translateY(0)';
+                                                }}
+                                            >
                                                 <div style={{ 
-                                                    fontSize: '11px', 
-                                                    color: '#2c3e50',
-                                                    backgroundColor: '#e8f4fd',
-                                                    padding: '5px 8px',
-                                                    borderRadius: '4px',
-                                                    marginTop: '5px'
+                                                    display: 'flex', 
+                                                    alignItems: 'center', 
+                                                    gap: 'var(--spacing-3)',
+                                                    marginBottom: 'var(--spacing-2)'
                                                 }}>
-                                                    🚗 ETA: {travelTimes[participant._id].duration.text}<br />
-                                                    📍 Distance: {travelTimes[participant._id].distance.text}
+                                                    <div 
+                                                        className="avatar avatar-sm" 
+                                                        style={{
+                                                            backgroundColor: participant.role === 'Group Leader' ? 'var(--accent-coral)' : 'var(--primary-teal)',
+                                                            color: 'white'
+                                                        }}
+                                                    >
+                                                        {participant.username[0].toUpperCase()}
+                                                    </div>
+                                                    <div>
+                                                        <div className="text-sm font-medium text-neutral-900">
+                                                            {participant.username}
+                                                            <span style={{ 
+                                                                marginLeft: 'var(--spacing-1)',
+                                                                fontSize: 'var(--font-size-base)'
+                                                            }}>
+                                                                {participant.role === 'Group Leader' ? '👑' : '👤'}
+                                                            </span>
+                                                        </div>
+                                                        <div className="text-xs text-neutral-500">
+                                                            {participant.role}
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            )}
-                                        </li>
-                                    ))}
-                                </ul>
+                                                
+                                                {locationUpdates[participant._id] && (
+                                                    <div className="text-xs text-neutral-400" style={{ marginBottom: 'var(--spacing-2)' }}>
+                                                        Last update: {new Date(locationUpdates[participant._id].timestamp).toLocaleTimeString()}
+                                                    </div>
+                                                )}
+                                                
+                                                {travelTimes[participant._id] && (
+                                                    <div style={{ 
+                                                        fontSize: 'var(--font-size-xs)', 
+                                                        color: 'var(--neutral-700)',
+                                                        backgroundColor: 'var(--primary-50)',
+                                                        padding: 'var(--spacing-2)',
+                                                        borderRadius: 'var(--radius-md)',
+                                                        border: '1px solid var(--primary-200)'
+                                                    }}>
+                                                        🚗 ETA: {travelTimes[participant._id].duration.text}<br />
+                                                        📍 Distance: {travelTimes[participant._id].distance.text}
+                                                    </div>
+                                                )}
+                                                
+                                                {/* Route indicators and loading state */}
+                                                <div style={{ 
+                                                    marginTop: 'var(--spacing-3)',
+                                                    paddingTop: 'var(--spacing-2)',
+                                                    borderTop: '1px solid var(--neutral-200)',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'space-between'
+                                                }}>
+                                                    {journey && journey.destination && locationUpdates[participant._id] ? (
+                                                        <>
+                                                            <div className="text-xs text-neutral-500">
+                                                                {selectedParticipantId === participant._id 
+                                                                    ? '🗺️ Route shown' 
+                                                                    : '🔍 Click to show route'}
+                                                            </div>
+                                                            {loadingRoute && selectedParticipantId === participant._id && (
+                                                                <div className="text-xs text-primary-teal">
+                                                                    Loading...
+                                                                </div>
+                                                            )}
+                                                            {selectedParticipantId === participant._id && !loadingRoute && (
+                                                                <div style={{ 
+                                                                    width: '8px',
+                                                                    height: '8px',
+                                                                    backgroundColor: 'var(--primary-teal)',
+                                                                    borderRadius: '50%',
+                                                                    marginLeft: 'var(--spacing-2)'
+                                                                }} />
+                                                            )}
+                                                        </>
+                                                    ) : (
+                                                        <div className="text-xs text-neutral-400">
+                                                            {!journey || !journey.destination 
+                                                                ? '📍 No destination set' 
+                                                                : '⏳ Waiting for location'}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
                                 
                                 {/* Destination Management for Group Leaders */}
                                 {isGroupLeader() && (
-                                    <div style={{ 
-                                        marginBottom: '20px',
-                                        padding: '15px',
-                                        backgroundColor: 'white',
-                                        borderRadius: '8px',
-                                        border: '2px solid #28a745',
-                                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                                    <div className="card" style={{ 
+                                        marginBottom: 'var(--spacing-6)',
+                                        border: '2px solid var(--success-200)',
+                                        backgroundColor: 'var(--success-50)'
                                     }}>
-                                        <h4 style={{ margin: '0 0 10px 0', color: '#28a745', fontSize: '14px' }}>
+                                        <h4 className="text-sm font-medium text-success-700" style={{ 
+                                            marginBottom: 'var(--spacing-3)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: 'var(--spacing-1)'
+                                        }}>
                                             🎯 Destination Management
                                         </h4>
                                         {journey?.destination && (
                                             <div style={{
-                                                fontSize: '12px',
-                                                color: '#666',
-                                                marginBottom: '10px',
-                                                padding: '8px',
-                                                backgroundColor: '#f8f9fa',
-                                                borderRadius: '4px'
+                                                fontSize: 'var(--font-size-xs)',
+                                                color: 'var(--neutral-600)',
+                                                marginBottom: 'var(--spacing-3)',
+                                                padding: 'var(--spacing-2)',
+                                                backgroundColor: 'var(--neutral-100)',
+                                                borderRadius: 'var(--radius-md)',
+                                                border: '1px solid var(--neutral-200)'
                                             }}>
                                                 Current: {journey.destination.coordinates[1].toFixed(4)}, {journey.destination.coordinates[0].toFixed(4)}
                                             </div>
                                         )}
-                                        <div style={{ fontSize: '11px', color: '#666', marginBottom: '8px' }}>
+                                        <p className="text-xs text-neutral-600" style={{ marginBottom: 'var(--spacing-2)' }}>
                                             Click on map or search to update destination
-                                        </div>
+                                        </p>
                                         <DestinationSearch 
                                             onDestinationSelect={handleDestinationSelect}
                                             currentLocation={currentLocation}
@@ -499,25 +728,25 @@ const Dashboard = () => {
                                     </div>
                                 )}
                                 
-                                <h4 style={{ margin: '20px 0 10px 0', color: '#333', fontSize: '14px' }}>
+                                <h4 className="text-sm font-medium text-neutral-700" style={{ marginBottom: 'var(--spacing-3)' }}>
                                     Live Location Updates
                                 </h4>
-                                <div style={{ fontSize: '11px' }}>
+                                <div>
                                     {Object.entries(locationUpdates).map(([userId, update]) => (
                                         <div key={userId} style={{ 
-                                            padding: '8px', 
-                                            margin: '5px 0', 
-                                            backgroundColor: '#e8f4fd',
-                                            borderRadius: '4px',
-                                            border: '1px solid #bee5eb'
+                                            padding: 'var(--spacing-2)', 
+                                            margin: '0 0 var(--spacing-2) 0', 
+                                            backgroundColor: 'var(--primary-50)',
+                                            borderRadius: 'var(--radius-md)',
+                                            border: '1px solid var(--primary-200)'
                                         }}>
-                                            <div style={{ fontWeight: 'bold', marginBottom: '2px' }}>
+                                            <div className="text-xs font-medium text-neutral-800" style={{ marginBottom: 'var(--spacing-1)' }}>
                                                 {update.username}
                                             </div>
-                                            <div style={{ color: '#666' }}>
+                                            <div className="text-xs text-neutral-600">
                                                 {update.latitude.toFixed(4)}, {update.longitude.toFixed(4)}
                                             </div>
-                                            <div style={{ color: '#888', fontSize: '10px' }}>
+                                            <div className="text-xs text-neutral-400">
                                                 {new Date(update.timestamp).toLocaleTimeString()}
                                             </div>
                                         </div>

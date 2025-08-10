@@ -137,14 +137,81 @@ class MapService {
         this.openRouteServiceKey = apiKey;
     }
 
-    // Get route coordinates for path visualization
-    async getRouteCoordinates(startPoint, endPoint) {
-        // For now, return simple straight line coordinates
-        // Can be enhanced with actual routing API
+    // Get route coordinates for path visualization using OpenRouteService
+    async getRouteCoordinates(startPoint, endPoint, transportMode = 'driving-car') {
+        // First try with OpenRouteService if API key is available
+        if (this.openRouteServiceKey) {
+            try {
+                const response = await fetch(`https://api.openrouteservice.org/v2/directions/${transportMode}`, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': this.openRouteServiceKey,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        coordinates: [
+                            [startPoint.lng, startPoint.lat],
+                            [endPoint.lng, endPoint.lat]
+                        ],
+                        format: 'geojson'
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.features && data.features[0] && data.features[0].geometry) {
+                    // Convert coordinates to lat/lng format for Leaflet
+                    return data.features[0].geometry.coordinates.map(coord => [coord[1], coord[0]]);
+                }
+            } catch (error) {
+                console.warn('OpenRouteService routing failed, using fallback:', error);
+            }
+        }
+
+        // Fallback: Use OSRM public API (free but limited)
+        try {
+            const response = await fetch(
+                `https://router.project-osrm.org/route/v1/driving/${startPoint.lng},${startPoint.lat};${endPoint.lng},${endPoint.lat}?overview=full&geometries=geojson`
+            );
+            
+            const data = await response.json();
+            
+            if (data.routes && data.routes[0] && data.routes[0].geometry) {
+                // Convert coordinates to lat/lng format for Leaflet
+                return data.routes[0].geometry.coordinates.map(coord => [coord[1], coord[0]]);
+            }
+        } catch (error) {
+            console.warn('OSRM routing failed, using straight line:', error);
+        }
+
+        // Final fallback: return simple straight line coordinates
         return [
             [startPoint.lat, startPoint.lng],
             [endPoint.lat, endPoint.lng]
         ];
+    }
+
+    // Get detailed route information including coordinates and travel time
+    async getRouteDetails(startPoint, endPoint, transportMode = 'driving-car') {
+        try {
+            // Get route coordinates
+            const coordinates = await this.getRouteCoordinates(startPoint, endPoint, transportMode);
+            
+            // Get travel time information
+            const travelInfo = await this.getTravelTimeToDestination(startPoint, endPoint);
+            
+            return {
+                coordinates,
+                distance: travelInfo ? travelInfo.distance : null,
+                duration: travelInfo ? travelInfo.duration : null,
+                startPoint,
+                endPoint
+            };
+        } catch (error) {
+            console.error('Error getting route details:', error);
+            return null;
+        }
     }
 }
 

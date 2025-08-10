@@ -32,150 +32,129 @@ const Login = () => {
     return (
         <div style={{
             minHeight: '100vh',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: 'linear-gradient(135deg, var(--primary-600) 0%, var(--accent-coral) 100%)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: '20px'
+            padding: 'var(--spacing-4)'
         }}>
-            <div style={{
-                backgroundColor: 'white',
-                padding: '40px',
-                borderRadius: '15px',
-                boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
+            <div className="card" style={{
                 width: '100%',
-                maxWidth: '400px'
+                maxWidth: '400px',
+                animation: 'slideUp 0.5s ease-out'
             }}>
-                <h2 style={{ 
-                    textAlign: 'center', 
-                    marginBottom: '30px',
-                    color: '#333',
-                    fontSize: '2rem'
-                }}>
-                    Welcome Back!
-                </h2>
+                <div className="card-header" style={{ textAlign: 'center', paddingBottom: 'var(--spacing-8)' }}>
+                    <div style={{
+                        width: '4rem',
+                        height: '4rem',
+                        backgroundColor: 'var(--primary-teal)',
+                        borderRadius: 'var(--radius-xl)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '2rem',
+                        margin: '0 auto var(--spacing-4) auto'
+                    }}>
+                        🗺️
+                    </div>
+                    <h1 className="heading-xl" style={{ marginBottom: 'var(--spacing-2)' }}>
+                        Welcome Back!
+                    </h1>
+                    <p className="text-neutral-600">
+                        Sign in to continue your journey
+                    </p>
+                </div>
                 
                 {error && (
-                    <div style={{
-                        backgroundColor: '#fee',
-                        color: '#c33',
-                        padding: '10px',
-                        borderRadius: '5px',
-                        marginBottom: '20px',
-                        border: '1px solid #fcc'
-                    }}>
-                        {error}
+                    <div className="alert alert-error" style={{ marginBottom: 'var(--spacing-6)' }}>
+                        <div className="alert-title">Login Failed</div>
+                        <div className="alert-description">{error}</div>
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit}>
-                    <div style={{ marginBottom: '20px' }}>
-                        <label style={{ 
-                            display: 'block', 
-                            marginBottom: '5px', 
-                            fontWeight: 'bold',
-                            color: '#555'
-                        }}>
+                <form onSubmit={handleSubmit} className="card-content">
+                    <div style={{ marginBottom: 'var(--spacing-5)' }}>
+                        <label className="form-label" htmlFor="username">
                             Username
                         </label>
                         <input
+                            id="username"
                             type="text"
+                            className="form-input"
                             placeholder="Enter your username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             required
-                            style={{
-                                width: '100%',
-                                padding: '12px',
-                                border: '2px solid #ddd',
-                                borderRadius: '8px',
-                                fontSize: '16px',
-                                boxSizing: 'border-box',
-                                transition: 'border-color 0.3s'
-                            }}
-                            onFocus={(e) => e.target.style.borderColor = '#667eea'}
-                            onBlur={(e) => e.target.style.borderColor = '#ddd'}
                         />
                     </div>
                     
-                    <div style={{ marginBottom: '20px' }}>
-                        <label style={{ 
-                            display: 'block', 
-                            marginBottom: '5px', 
-                            fontWeight: 'bold',
-                            color: '#555'
-                        }}>
+                    <div style={{ marginBottom: 'var(--spacing-6)' }}>
+                        <label className="form-label" htmlFor="password">
                             Password
                         </label>
                         <input
+                            id="password"
                             type="password"
+                            className="form-input"
                             placeholder="Enter your password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
-                            style={{
-                                width: '100%',
-                                padding: '12px',
-                                border: '2px solid #ddd',
-                                borderRadius: '8px',
-                                fontSize: '16px',
-                                boxSizing: 'border-box',
-                                transition: 'border-color 0.3s'
-                            }}
-                            onFocus={(e) => e.target.style.borderColor = '#667eea'}
-                            onBlur={(e) => e.target.style.borderColor = '#ddd'}
                         />
                     </div>
                     
                     <button 
                         type="submit" 
+                        className={`btn ${loading ? 'btn-disabled' : 'btn-primary'} btn-lg`}
                         disabled={loading}
-                        style={{
+                        style={{ 
                             width: '100%',
-                            padding: '15px',
-                            backgroundColor: loading ? '#ccc' : '#667eea',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '8px',
-                            fontSize: '16px',
-                            fontWeight: 'bold',
-                            cursor: loading ? 'not-allowed' : 'pointer',
-                            transition: 'background-color 0.3s'
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: 'var(--spacing-2)'
                         }}
                     >
+                        {loading && (
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ animation: 'spin 1s linear infinite' }}>
+                                <path d="M12 2V6M12 18V22M6 12H2M22 12H18M19.07 19.07L16.24 16.24M19.07 4.93L16.24 7.76M4.93 19.07L7.76 16.24M4.93 4.93L7.76 7.76" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                            </svg>
+                        )}
                         {loading ? 'Signing In...' : 'Sign In'}
                     </button>
                 </form>
                 
-                <div style={{ 
-                    textAlign: 'center', 
-                    marginTop: '20px',
-                    color: '#666'
-                }}>
-                    Don't have an account?{' '}
-                    <Link 
-                        to="/signup" 
-                        style={{ 
-                            color: '#667eea', 
-                            textDecoration: 'none',
-                            fontWeight: 'bold'
-                        }}
-                    >
-                        Sign up here
-                    </Link>
-                </div>
-                
-                <div style={{ 
-                    textAlign: 'center', 
-                    marginTop: '15px'
-                }}>
+                <div className="card-footer" style={{ textAlign: 'center', paddingTop: 'var(--spacing-6)' }}>
+                    <p className="text-neutral-600" style={{ marginBottom: 'var(--spacing-3)' }}>
+                        Don't have an account?{' '}
+                        <Link 
+                            to="/signup" 
+                            style={{ 
+                                color: 'var(--primary-teal)', 
+                                textDecoration: 'none',
+                                fontWeight: 'var(--font-weight-semibold)',
+                                transition: 'color var(--transition-normal)'
+                            }}
+                            onMouseEnter={(e) => e.target.style.color = 'var(--primary-700)'}
+                            onMouseLeave={(e) => e.target.style.color = 'var(--primary-teal)'}
+                        >
+                            Sign up here
+                        </Link>
+                    </p>
+                    
                     <Link 
                         to="/" 
+                        className="text-neutral-500"
                         style={{ 
-                            color: '#999', 
                             textDecoration: 'none',
-                            fontSize: '14px'
+                            fontSize: 'var(--font-size-sm)',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 'var(--spacing-1)',
+                            transition: 'color var(--transition-normal)'
                         }}
+                        onMouseEnter={(e) => e.target.style.color = 'var(--neutral-700)'}
+                        onMouseLeave={(e) => e.target.style.color = 'var(--neutral-500)'}
                     >
                         ← Back to Home
                     </Link>
