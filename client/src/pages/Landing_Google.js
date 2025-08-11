@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Map from '../components/Map';
 
 const Landing = () => {
     return (
@@ -240,23 +239,15 @@ const Landing = () => {
                             backgroundColor: '#ffffff',
                             borderRadius: '8px',
                             height: '400px',
-                            overflow: 'hidden',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '48px',
+                            color: '#1a73e8',
                             boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
                             border: '1px solid #e8eaed'
                         }}>
-                            <Map 
-                                center={{ lat: 19.0760, lng: 72.8777 }}
-                                zoom={13} 
-                                participants={[]}
-                                locationUpdates={{}}
-                                currentLocation={null}
-                                destination={null}
-                                isLeader={false}
-                                onDestinationSelect={null}
-                                showRoute={false}
-                                routeCoordinates={null}
-                                selectedParticipantId={null}
-                            />
+                            🗺️
                         </div>
                         <p style={{
                             marginTop: '16px',

@@ -345,7 +345,7 @@ p {
 
 .card-footer {
   padding: var(--spacing-6);
-  border-top: 1px solid var(--neutral-200);
+  /* border-top: 1px solid var(--neutral-200); */
   background-color: var(--neutral-50);
 }
 
@@ -353,7 +353,7 @@ p {
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);
   color: var(--neutral-900);
-  margin-bottom: var(--spacing-2);
+  /* margin-bottom: var(--spacing-2); */
 }
 
 .card-description {
@@ -630,12 +630,11 @@ p {
 
 /* Loading Spinner */
 .spinner {
-  width: 1.5rem;
-  height: 1.5rem;
-  border: 2px solid var(--neutral-200);
-  border-top: 2px solid var(--primary-teal);
-  border-radius: var(--radius-full);
-  animation: spin 1s linear infinite;
+  border-width: 3px;
+  border-style: solid;
+  border-top-color: transparent !important;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
@@ -649,7 +648,7 @@ p {
 .participant-marker,
 .destination-marker {
   border-radius: 50% !important;
-  transition: transform var(--transition-normal);
+  transition: transform var(--transition-standard);
 }
 
 .default-marker:hover,
@@ -661,27 +660,149 @@ p {
 
 /* Ensure Leaflet controls don't interfere with our layout */
 .leaflet-container {
-  font-family: inherit;
-  border-radius: var(--radius-xl);
+  font-family: var(--font-family-primary);
+  border-radius: 8px;
   overflow: hidden;
+  background-color: #f5f5f5;
 }
 
-/* Custom popup styling */
+/* Google Maps style controls */
+.leaflet-control-zoom {
+  border: none !important;
+  border-radius: 4px !important;
+  box-shadow: var(--elevation-2) !important;
+}
+
+.leaflet-control-zoom a {
+  background-color: #ffffff !important;
+  border: none !important;
+  color: #5f6368 !important;
+  font-size: 18px !important;
+  font-weight: 500 !important;
+  line-height: 30px !important;
+  text-align: center !important;
+  transition: all var(--transition-standard) !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background-color: #f8f9fa !important;
+  color: #3c4043 !important;
+}
+
+.leaflet-control-zoom a:first-child {
+  border-top-left-radius: 4px !important;
+  border-top-right-radius: 4px !important;
+}
+
+.leaflet-control-zoom a:last-child {
+  border-bottom-left-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
+}
+
+/* Custom popup styling with Google design */
 .leaflet-popup-content-wrapper {
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-xl);
+  border-radius: 8px !important;
+  box-shadow: var(--elevation-3) !important;
+  border: 1px solid #e0e0e0 !important;
+  padding: 0 !important;
 }
 
 .leaflet-popup-content {
-  margin: var(--spacing-3) var(--spacing-4);
+  margin: 0 !important;
   line-height: 1.4;
-  font-family: inherit;
+  font-family: var(--font-family-primary) !important;
+  color: var(--google-maps-text-primary) !important;
+}
+
+.leaflet-popup-tip {
+  background-color: white !important;
+  border: 1px solid #e0e0e0 !important;
 }
 
 /* Fix for Leaflet attribution */
 .leaflet-control-attribution {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-caption) !important;
   opacity: 0.7;
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  border-radius: 4px !important;
+  padding: 2px 6px !important;
+  font-family: var(--font-family-secondary) !important;
+}
+
+/* Animated route for Google Maps style movement indication */
+@keyframes dash-animation {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -25px;
+  }
+}
+
+.animated-route {
+  animation: dash-animation 2s linear infinite;
+}
+
+.animated-route path {
+  animation: dash-animation 2s linear infinite;
+}
+
+/* Google Maps style route enhancements */
+.leaflet-interactive {
+  cursor: pointer;
+}
+
+.leaflet-interactive:hover {
+  filter: brightness(1.1);
+}
+
+/* Route popup styling */
+.leaflet-popup-content-wrapper .route-popup {
+  font-family: var(--font-family-primary);
+  border-radius: 8px;
+  box-shadow: var(--elevation-3);
+}
+
+/* Google Maps style current location marker */
+.current-location-marker {
+  position: relative !important;
+  width: 24px !important;
+  height: 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.current-location-marker .dot {
+  background-color: var(--google-blue);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  position: relative;
+  z-index: 2;
+}
+
+.current-location-marker .beam {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: rgba(26, 115, 232, 0.3);
+  animation: beam-animation 1.5s infinite ease-out;
+  z-index: 1;
+}
+
+@keyframes beam-animation {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
 }
 
 /* Utility Classes */
@@ -922,4 +1043,25 @@ body {
 
 .route-animation {
   animation: routeAppear 2s ease-in-out;
+}
+
+/* Spinner component styles */
+.spinner {
+  border-width: 3px;
+  border-style: solid;
+  border-top-color: transparent !important;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }

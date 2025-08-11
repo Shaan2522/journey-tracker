@@ -49,9 +49,14 @@ module.exports = (io) => {
                 console.log(`User ${socket.user.username} joined journey ${journeyCode}`);
                 
                 // Send current participants to the user
+                const participants = [
+                    { ...journey.leader.toObject(), role: 'Group Leader' },
+                    ...journey.members.map(member => ({ ...member.toObject(), role: 'Group Member' }))
+                ];
+                
                 socket.emit('journey-joined', {
                     journey,
-                    participants: [journey.leader, ...journey.members]
+                    participants: participants
                 });
 
                 // Notify other participants

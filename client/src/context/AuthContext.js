@@ -34,6 +34,20 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('user', JSON.stringify(userData));
     };
 
+    const refreshUser = async () => {
+        // Refresh user data from localStorage if available
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            try {
+                const userData = JSON.parse(storedUser);
+                // In a real app, you might want to fetch fresh data from the server
+                setUser(userData);
+            } catch (error) {
+                console.error('Error refreshing user data:', error);
+            }
+        }
+    };
+
     const logout = () => {
         setUser(null);
         localStorage.removeItem('user');
@@ -43,6 +57,7 @@ export const AuthProvider = ({ children }) => {
         user,
         login,
         logout,
+        refreshUser,
         isAuthenticated: !!user,
         loading
     };

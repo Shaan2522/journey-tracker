@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useAuth } from '../context/AuthContext';
 import journeyService from '../services/journeyService';
 import socketService from '../services/socketService';
 import mapService from '../services/mapService';
@@ -7,6 +8,7 @@ import DestinationSearch from '../components/DestinationSearch';
 import Header from '../components/Header';
 
 const Dashboard = () => {
+    const { user, refreshUser } = useAuth();
     const [journey, setJourney] = useState(null);
     const [code, setCode] = useState('');
     const [currentLocation, setCurrentLocation] = useState(null);
@@ -33,14 +35,14 @@ const Dashboard = () => {
                 },
                 (error) => {
                     console.error('Error getting location:', error);
-                    setLocationError('Unable to get your location. Using default location.');
-                    // Fallback to default location (NYC)
-                    setCurrentLocation({ lat: 40.730610, lng: -73.935242 });
+                    setLocationError('Unable to get your location. Using Mumbai as default location.');
+                    // Fallback to default location (Mumbai)
+                    setCurrentLocation({ lat: 19.0760, lng: 72.8777 });
                 }
             );
         } else {
             setLocationError('Geolocation is not supported by this browser.');
-            setCurrentLocation({ lat: 40.730610, lng: -73.935242 });
+            setCurrentLocation({ lat: 19.0760, lng: 72.8777 });
         }
 
         return () => {
@@ -53,13 +55,14 @@ const Dashboard = () => {
     }, []);
 
     const connectToSocket = () => {
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (!user || !user.token) {
-            console.error('No user token found');
-            return;
-        }
+        try {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || !user.token) {
+                console.error('No user token found');
+                return;
+            }
 
-        const socket = socketService.connect(user.token);
+            const socket = socketService.connect(user.token);
         
         socket.on('connect', () => {
             setIsConnected(true);
@@ -145,6 +148,9 @@ const Dashboard = () => {
             // Show notification
             alert(`🎯 Destination updated by ${data.updatedBy}`);
         });
+        } catch (error) {
+            console.error('Error connecting to socket:', error);
+        }
     };
 
     const startLocationSharing = (journeyCode) => {
@@ -191,10 +197,16 @@ const Dashboard = () => {
                 setJourney(response.data);
                 
                 // Notify other participants via socket
-                socketService.sendMessage(journey.code, 'destination_updated', {
-                    destination: destinationData,
-                    updatedBy: JSON.parse(localStorage.getItem('user')).username
-                });
+                try {
+                    if (user && user.username) {
+                        socketService.sendMessage(journey.code, 'destination_updated', {
+                            destination: destinationData,
+                            updatedBy: user.username
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error notifying participants:', error);
+                }
             } catch (error) {
                 console.error('Failed to update destination:', error);
                 alert('Failed to update destination. Please try again.');
@@ -203,10 +215,21 @@ const Dashboard = () => {
     };
 
     const getUserRole = () => {
-        if (!journey || !participants.length) return null;
-        const currentUser = JSON.parse(localStorage.getItem('user'));
-        const participant = participants.find(p => p._id === currentUser.id);
-        return participant?.role;
+        if (!journey || !participants.length || !user || !user.id) return null;
+        
+        try {
+            // Check if current user is the journey leader
+            if (journey.leader === user.id) {
+                return 'Group Leader';
+            }
+            
+            // Otherwise, they are a group member
+            const participant = participants.find(p => p._id === user.id);
+            return participant?.role || 'Group Member';
+        } catch (error) {
+            console.error('Error getting user role:', error);
+            return null;
+        }
     };
 
     const isGroupLeader = () => {
@@ -233,6 +256,9 @@ const Dashboard = () => {
             const { data } = await journeyService.createJourney({ destination: destinationData });
             setJourney(data);
             
+            // Refresh user data to get updated role (Group Leader)
+            refreshUser();
+            
             // Connect to socket and start sharing location
             connectToSocket();
             setTimeout(() => {
@@ -247,6 +273,8 @@ const Dashboard = () => {
     const handleJoinJourney = async () => {
         try {
             const { data } = await journeyService.joinJourney(code);
+            console.log('🎯 Journey joined successfully:', data);
+            console.log('🎯 Journey destination:', data.destination);
             setJourney(data);
             
             // Connect to socket and start sharing location
@@ -254,6 +282,14 @@ const Dashboard = () => {
             setTimeout(() => {
                 socketService.joinJourney(data.code);
                 startLocationSharing(data.code);
+                
+                // Force route display if we have current location and destination
+                if (currentLocation && data.destination) {
+                    console.log('🗺️ Triggering route display for joined journey');
+                    console.log('🗺️ Current location:', currentLocation);
+                    console.log('🗺️ Journey destination:', data.destination);
+                    // The route will be displayed by the Map component's useEffect
+                }
             }, 1000);
         } catch (error) {
             console.error('Failed to join journey', error);
@@ -308,7 +344,8 @@ const Dashboard = () => {
         }
     };
 
-    const mapCenter = currentLocation || { lat: 40.730610, lng: -73.935242 };
+    // Default to Mumbai coordinates if no current location
+    const mapCenter = currentLocation || { lat: 19.0760, lng: 72.8777 };
 
     return (
         <div style={{ minHeight: '100vh', backgroundColor: '#f8f9fa', fontFamily: 'var(--font-family-primary)' }}>
@@ -333,30 +370,8 @@ const Dashboard = () => {
                         color: '#3c4043',
                         margin: '0',
                         fontFamily: 'var(--font-family-primary)'
-                    }}>Journey Tracker</h1>
-                    {isConnected && (
-                        <div style={{ 
-                            backgroundColor: '#e8f5e8',
-                            color: '#137333',
-                            border: '1px solid #34a853',
-                            borderRadius: '16px',
-                            padding: '6px 12px',
-                            fontSize: '14px',
-                            fontWeight: '500',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            fontFamily: 'var(--font-family-secondary)'
-                        }}>
-                            <div style={{
-                                width: '8px',
-                                height: '8px',
-                                backgroundColor: '#34a853',
-                                borderRadius: '50%'
-                            }}></div>
-                            Connected
-                        </div>
-                    )}
+                    }}></h1>
+                    {isConnected}
                 </div>
                 
                 {locationError && (
@@ -468,13 +483,43 @@ const Dashboard = () => {
                                 </div>
                             </div>
                             
+                            {/* Map for destination selection */}
+                            <div style={{ marginBottom: 'var(--spacing-6)' }}>
+                                <label className="form-label">
+                                    🗺️ Interactive Map
+                                </label>
+                                <p className="form-description">
+                                    Click on the map to select your destination
+                                </p>
+                                <div style={{ 
+                                    border: '1px solid #dadce0', 
+                                    borderRadius: '8px', 
+                                    overflow: 'hidden',
+                                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                                }}>
+                                    <Map 
+                                        center={currentLocation || { lat: 19.0760, lng: 72.8777 }} 
+                                        zoom={13} 
+                                        participants={[]}
+                                        locationUpdates={{}}
+                                        currentLocation={currentLocation}
+                                        destination={destination}
+                                        isLeader={true}
+                                        onDestinationSelect={handleDestinationSelect}
+                                        showRoute={false}
+                                        routeCoordinates={null}
+                                        selectedParticipantId={null}
+                                    />
+                                </div>
+                            </div>
+                            
                             {/* Destination Selection */}
                             <div style={{ marginBottom: 'var(--spacing-6)' }}>
                                 <label className="form-label">
-                                    🎯 Select Destination
+                                    🎯 Or Search for Destination
                                 </label>
                                 <p className="form-description">
-                                    Search for a location or click anywhere on the map to set your destination
+                                    Search for a location by name or address
                                 </p>
                                 <DestinationSearch 
                                     onDestinationSelect={handleDestinationSelect}
@@ -607,7 +652,7 @@ const Dashboard = () => {
                             <div className="map-section">
                                 <Map 
                                     center={mapCenter} 
-                                    zoom={15} 
+                                    zoom={13} 
                                     participants={participants}
                                     locationUpdates={locationUpdates}
                                     currentLocation={currentLocation}
@@ -617,10 +662,40 @@ const Dashboard = () => {
                                     } : destination}
                                     isLeader={isGroupLeader()}
                                     onDestinationSelect={handleDestinationSelect}
-                                    showRoute={Boolean(currentLocation && (journey?.destination || destination))}
+                                    showRoute={!!(currentLocation && (journey?.destination || destination))}
                                     routeCoordinates={participantRoute}
                                     selectedParticipantId={selectedParticipantId}
                                 />
+                                
+                                {/* Route Debug Info - Remove after testing */}
+                                {process.env.NODE_ENV === 'development' && (
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '10px',
+                                        right: '10px',
+                                        background: 'rgba(0,0,0,0.8)',
+                                        color: 'white',
+                                        padding: '8px',
+                                        borderRadius: '4px',
+                                        fontSize: '11px',
+                                        zIndex: 1000,
+                                        maxWidth: '300px'
+                                    }}>
+                                        <div>Current Location: {currentLocation ? '✅' : '❌'}</div>
+                                        <div>Current Coords: {currentLocation ? `${currentLocation.lat.toFixed(4)}, ${currentLocation.lng.toFixed(4)}` : 'None'}</div>
+                                        <div>Journey: {journey ? journey.code : 'None'}</div>
+                                        <div>Journey Dest: {journey?.destination ? '✅' : '❌'}</div>
+                                        {journey?.destination && (
+                                            <div>Journey Coords: {journey.destination.coordinates[1].toFixed(4)}, {journey.destination.coordinates[0].toFixed(4)}</div>
+                                        )}
+                                        <div>Local Dest: {destination ? '✅' : '❌'}</div>
+                                        {destination && (
+                                            <div>Local Coords: {destination.lat.toFixed(4)}, {destination.lng.toFixed(4)}</div>
+                                        )}
+                                        <div>Final Dest: {(journey?.destination || destination) ? '✅' : '❌'}</div>
+                                        <div>Show Route: {!(currentLocation && (journey?.destination || destination)) ? '✅' : '❌'}</div>
+                                    </div>
+                                )}
                             </div>
                             
                             <div className="sidebar-section">
@@ -641,7 +716,7 @@ const Dashboard = () => {
                                     ) : (
                                         participants.map((participant) => (
                                             <div 
-                                                key={participant._id} 
+                                                key={`participant-${participant._id}`} 
                                                 className="card" 
                                                 onClick={() => handleParticipantClick(participant._id)}
                                                 style={{ 
@@ -805,7 +880,7 @@ const Dashboard = () => {
                                 </h4>
                                 <div>
                                     {Object.entries(locationUpdates).map(([userId, update]) => (
-                                        <div key={userId} style={{ 
+                                        <div key={`location-${userId}`} style={{ 
                                             padding: 'var(--spacing-2)', 
                                             margin: '0 0 var(--spacing-2) 0', 
                                             backgroundColor: 'var(--primary-50)',

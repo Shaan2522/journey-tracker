@@ -162,7 +162,7 @@ const Header = () => {
                                 color: 'var(--google-maps-text-secondary)',
                                 marginBottom: 'var(--spacing-1)'
                             }}>
-                                {user?.email || 'user@example.com'}
+                                {user?.username}@journeytracker.app
                             </div>
                             <div style={{ 
                                 fontSize: '12px', 

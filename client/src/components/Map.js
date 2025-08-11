@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -32,6 +32,8 @@ const Map = ({
     const destinationMarkerRef = useRef(null);
     const mainRouteLayerRef = useRef(null); // For main user route
     const participantRouteLayerRef = useRef(null); // For participant route
+    const mapReadyRef = useRef(false); // Track when map is fully initialized
+    const [isMapReady, setIsMapReady] = useState(false); // State for triggering effects when map is ready
 
     // Function to fetch route coordinates using OSRM
     const fetchRouteCoordinates = async (start, end) => {
@@ -99,14 +101,85 @@ const Map = ({
                     mapInstanceRef.current = L.map(mapRef.current, {
                         preferCanvas: true,
                         zoomControl: true,
-                        attributionControl: true
+                        attributionControl: false, // Hide default attribution for cleaner look
+                        scrollWheelZoom: true,
+                        doubleClickZoom: true,
+                        touchZoom: true,
+                        boxZoom: true,
+                        keyboard: true,
+                        dragging: true
                     }).setView([center.lat, center.lng], zoom);
+                    console.log('✅ Map instance created successfully!');
                     
-                    // Add OpenStreetMap tiles
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-                        maxZoom: 19
+                    // Add Google-style tile layer with better appearance
+                    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                        maxZoom: 20,
+                        subdomains: 'abcd'
                     }).addTo(mapInstanceRef.current);
+
+                    // Add custom zoom control with Google-style positioning
+                    mapInstanceRef.current.zoomControl.setPosition('topright');
+                    
+                    // Set map as ready after a small delay to ensure everything is loaded
+                    setTimeout(() => {
+                        mapReadyRef.current = true;
+                        setIsMapReady(true); // This will trigger dependent effects
+                        console.log('✅ Map fully ready for markers and routes');
+                    }, 100);
+
+                    // Add Mumbai landmark marker if using default location (Mumbai)
+                    if (center.lat === 19.0760 && center.lng === 72.8777) {
+                        const mumbaiIcon = L.divIcon({
+                            className: 'mumbai-landmark-marker',
+                            html: `<div style="
+                                background-color: #1A73E8; 
+                                width: 28px; 
+                                height: 28px; 
+                                border-radius: 50% 50% 50% 0; 
+                                border: 3px solid white; 
+                                box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+                                position: relative;
+                                transform: rotate(-45deg);
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            ">
+                                <div style="
+                                    transform: rotate(45deg);
+                                    color: white;
+                                    font-size: 14px;
+                                ">🏙️</div>
+                            </div>`,
+                            iconSize: [34, 34],
+                            iconAnchor: [17, 30]
+                        });
+
+                        L.marker([19.0760, 72.8777], {
+                            icon: mumbaiIcon
+                        }).addTo(mapInstanceRef.current)
+                          .bindPopup(`
+                            <div style="
+                                font-family: 'Google Sans', 'Roboto', sans-serif;
+                                text-align: center;
+                                padding: 12px;
+                                min-width: 160px;
+                            ">
+                                <div style="
+                                    font-weight: 500;
+                                    font-size: 16px;
+                                    color: #3c4043;
+                                    margin-bottom: 6px;
+                                ">Mumbai, India</div>
+                                <div style="
+                                    color: #5f6368;
+                                    font-size: 12px;
+                                    line-height: 1.4;
+                                ">Default location for Journey Tracker<br/>
+                                   Allow location access for real-time tracking</div>
+                            </div>
+                          `);
+                    }
 
                     // Add click handler for destination selection (only for leaders)
                     if (isLeader && onDestinationSelect) {
@@ -131,6 +204,8 @@ const Map = ({
                     console.error('Error cleaning up map:', error);
                 } finally {
                     mapInstanceRef.current = null;
+                    mapReadyRef.current = false;
+                    setIsMapReady(false);
                     currentLocationMarkerRef.current = null;
                     destinationMarkerRef.current = null;
                     mainRouteLayerRef.current = null;
@@ -161,9 +236,12 @@ const Map = ({
                 } else {
                     const currentIcon = L.divIcon({
                         className: 'current-location-marker',
-                        html: `<div style="background-color: #007bff; width: 16px; height: 16px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 0 2px rgba(0,123,255,0.5);"></div>`,
-                        iconSize: [22, 22],
-                        iconAnchor: [11, 11]
+                        html: `
+                            <div class="beam"></div>
+                            <div class="dot"></div>
+                        `,
+                        iconSize: [24, 24],
+                        iconAnchor: [12, 12]
                     });
 
                     currentLocationMarkerRef.current = L.marker([currentLocation.lat, currentLocation.lng], {
@@ -200,21 +278,52 @@ const Map = ({
                         
                         const participantIcon = L.divIcon({
                             className: 'participant-marker',
-                            html: `<div style="background-color: ${isLeader ? '#dc3545' : '#28a745'}; width: 14px; height: 14px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 1px rgba(0,0,0,0.3);"></div>`,
-                            iconSize: [18, 18],
-                            iconAnchor: [9, 9]
+                            html: `<div style="
+                                background-color: ${isLeader ? '#EA4335' : '#34A853'}; 
+                                width: 16px; 
+                                height: 16px; 
+                                border-radius: 50%; 
+                                border: 3px solid white; 
+                                box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                color: white;
+                                font-size: 10px;
+                                font-weight: bold;
+                            ">${isLeader ? '👑' : '👤'}</div>`,
+                            iconSize: [22, 22],
+                            iconAnchor: [11, 11]
                         });
 
                         const marker = L.marker([locationData.latitude, locationData.longitude], {
                             icon: participantIcon
                         }).addTo(mapInstanceRef.current);
 
-                        // Add popup
+                        // Add popup with Google-style content
                         const popupContent = `
-                            <div style="text-align: center;">
-                                <strong>${participant.username}</strong><br/>
-                                <em style="color: ${isLeader ? '#dc3545' : '#28a745'};">${participant.role}</em><br/>
-                                <small>Last update: ${new Date(locationData.timestamp).toLocaleTimeString()}</small>
+                            <div style="
+                                font-family: 'Google Sans', 'Roboto', sans-serif;
+                                text-align: center;
+                                padding: 8px 12px;
+                                min-width: 120px;
+                            ">
+                                <div style="
+                                    font-weight: 500;
+                                    font-size: 14px;
+                                    color: #3c4043;
+                                    margin-bottom: 4px;
+                                ">${participant.username}</div>
+                                <div style="
+                                    color: ${isLeader ? '#EA4335' : '#34A853'};
+                                    font-size: 12px;
+                                    font-weight: 500;
+                                    margin-bottom: 6px;
+                                ">${participant.role}</div>
+                                <div style="
+                                    color: #5f6368;
+                                    font-size: 11px;
+                                ">Updated: ${new Date(locationData.timestamp).toLocaleTimeString()}</div>
                             </div>
                         `;
 
@@ -230,7 +339,14 @@ const Map = ({
 
     // Update destination marker
     useEffect(() => {
-        if (mapInstanceRef.current) {
+        console.log('🎯 Destination effect triggered:', { 
+            destination, 
+            hasMapInstance: !!mapInstanceRef.current,
+            mapReady: mapReadyRef.current,
+            isMapReady
+        });
+        
+        if (mapInstanceRef.current && mapReadyRef.current) {
             try {
                 // Remove existing destination marker
                 if (destinationMarkerRef.current) {
@@ -240,13 +356,16 @@ const Map = ({
 
                 // Add destination marker if destination exists
                 if (destination && destination.lat && destination.lng) {
+                    console.log('🎯 Adding destination marker at:', destination);
                     const destinationIcon = L.divIcon({
                         className: 'destination-marker',
-                        html: `<div style="background-color: #ff6b35; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 0 2px rgba(255,107,53,0.5); position: relative;">
-                            <div style="position: absolute; top: -8px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-bottom: 8px solid #ff6b35;"></div>
-                        </div>`,
-                        iconSize: [26, 34],
-                        iconAnchor: [13, 26]
+                        html: `<svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M19 0C12.3726 0 7 5.37258 7 12C7 21.75 19 38 19 38S31 21.75 31 12C31 5.37258 25.6274 0 19 0Z" fill="#EA4335"/>
+                                    <path d="M19 0C12.3726 0 7 5.37258 7 12C7 21.75 19 38 19 38S31 21.75 31 12C31 5.37258 25.6274 0 19 0Z" stroke="white" stroke-width="2"/>
+                                    <circle cx="19" cy="12" r="5" fill="white"/>
+                                </svg>`,
+                        iconSize: [38, 38],
+                        iconAnchor: [19, 38]
                     });
 
                     destinationMarkerRef.current = L.marker([destination.lat, destination.lng], {
@@ -258,16 +377,23 @@ const Map = ({
                 console.error('Error updating destination marker:', error);
             }
         }
-    }, [destination]);
+    }, [destination, isMapReady]);
 
     // Update main route visualization (current user to destination)
     useEffect(() => {
-        console.log('Route effect triggered:', { showRoute, currentLocation, destination });
+        console.log('🗺️ Route effect triggered:', { 
+            showRoute, 
+            hasCurrentLocation: !!currentLocation, 
+            hasDestination: !!destination,
+            mapInstance: !!mapInstanceRef.current,
+            mapReady: mapReadyRef.current,
+            isMapReady
+        });
         
-        if (mapInstanceRef.current && showRoute && currentLocation && destination) {
+        if (mapInstanceRef.current && mapReadyRef.current && showRoute && currentLocation && destination) {
             const displayRoute = async () => {
                 try {
-                    console.log('Displaying route from', currentLocation, 'to', destination);
+                    console.log('🗺️ Displaying route from', currentLocation, 'to', destination);
                     
                     // Remove existing main route
                     if (mainRouteLayerRef.current) {
@@ -277,58 +403,113 @@ const Map = ({
 
                     // Validate coordinates
                     if (!currentLocation.lat || !currentLocation.lng || !destination.lat || !destination.lng) {
-                        console.warn('Invalid coordinates for routing');
+                        console.warn('⚠️ Invalid coordinates for routing');
                         return;
                     }
 
                     // Fetch real route coordinates
                     const routeCoordinates = await fetchRouteCoordinates(currentLocation, destination);
 
-                    // Create white outline first (background)
-                    const outlineRoute = L.polyline(routeCoordinates, {
+                    if (!routeCoordinates || routeCoordinates.length < 2) {
+                        console.warn('⚠️ No valid route coordinates received');
+                        return;
+                    }
+
+                    // Google Maps style route with multiple layers for depth
+                    // 1. Shadow layer (darkest, widest)
+                    const shadowRoute = L.polyline(routeCoordinates, {
+                        color: '#000000',
+                        weight: 12,
+                        opacity: 0.15,
+                        lineCap: 'round',
+                        lineJoin: 'round',
+                        offset: 2
+                    });
+
+                    // 2. Border layer (white outline)
+                    const borderRoute = L.polyline(routeCoordinates, {
                         color: '#FFFFFF',
-                        weight: 8,
+                        weight: 10,
                         opacity: 0.9,
                         lineCap: 'round',
                         lineJoin: 'round'
                     });
 
-                    // Create main route on top
+                    // 3. Main route layer (Google blue)
                     const mainRoute = L.polyline(routeCoordinates, {
-                        color: '#4285F4', // Google Maps blue
-                        weight: 5,
+                        color: '#1A73E8', // Google Maps blue
+                        weight: 6,
                         opacity: 1.0,
                         lineCap: 'round',
                         lineJoin: 'round'
-                    }).bindPopup(`<div style="text-align: center; font-family: Inter, sans-serif;"><strong>🗺️ Your Route</strong><br/><small>Route to destination</small></div>`);
-
-                    // Create a layer group with both outline and main route
-                    mainRouteLayerRef.current = L.layerGroup([outlineRoute, mainRoute]).addTo(mapInstanceRef.current);
-
-                    // Fit map to show the route with padding
-                    const routeBounds = L.latLngBounds(routeCoordinates);
-                    mapInstanceRef.current.fitBounds(routeBounds, { 
-                        padding: [30, 30],
-                        maxZoom: 16 
                     });
 
+                    // 4. Animated overlay for movement indication
+                    const animatedRoute = L.polyline(routeCoordinates, {
+                        color: '#4285F4',
+                        weight: 2,
+                        opacity: 0.8,
+                        lineCap: 'round',
+                        lineJoin: 'round',
+                        dashArray: '10, 15',
+                        className: 'animated-route' // CSS animation
+                    });
+
+                    // Add popup to main route
+                    mainRoute.bindPopup(`
+                        <div style="
+                            font-family: 'Google Sans', 'Roboto', sans-serif;
+                            text-align: center;
+                            padding: 8px;
+                            min-width: 120px;
+                        ">
+                            <div style="
+                                font-weight: 500;
+                                font-size: 14px;
+                                color: #3c4043;
+                                margin-bottom: 4px;
+                            ">🗺️ Your Route</div>
+                            <div style="
+                                color: #5f6368;
+                                font-size: 12px;
+                            ">Click for directions</div>
+                        </div>
+                    `);
+
+                    // Create a layer group with all route layers
+                    mainRouteLayerRef.current = L.layerGroup([
+                        shadowRoute, 
+                        borderRoute, 
+                        mainRoute, 
+                        animatedRoute
+                    ]).addTo(mapInstanceRef.current);
+
+                    // Fit map to show the route with proper padding
+                    const routeBounds = L.latLngBounds(routeCoordinates);
+                    mapInstanceRef.current.fitBounds(routeBounds, { 
+                        padding: [40, 40],
+                        maxZoom: 15 
+                    });
+
+                    console.log('✅ Route displayed successfully with', routeCoordinates.length, 'points');
+
                 } catch (error) {
-                    console.error('Error displaying main route:', error);
+                    console.error('❌ Error displaying main route:', error);
                 }
             };
 
             displayRoute();
         } else if (mainRouteLayerRef.current && mapInstanceRef.current) {
-            console.log('Removing main route');
+            console.log('🗺️ Removing main route');
             try {
                 // Remove main route if showRoute is false
                 mapInstanceRef.current.removeLayer(mainRouteLayerRef.current);
                 mainRouteLayerRef.current = null;
             } catch (error) {
-                console.error('Error removing main route:', error);
+                console.error('❌ Error removing main route:', error);
             }
         }
-    }, [currentLocation, destination, showRoute]);
+    }, [currentLocation, destination, showRoute, isMapReady]);
 
     // Update participant route display
     useEffect(() => {
@@ -378,8 +559,7 @@ const Map = ({
     return (
         <div 
             ref={mapRef} 
-            key={`map-${center.lat}-${center.lng}`}
-            style={{ width: '100%', height: '500px', zIndex: 1 }} 
+            style={{ width: '100%', height: '100%', minHeight: '400px', zIndex: 1 }} 
         />
     );
 };

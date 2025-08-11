@@ -7,6 +7,9 @@ const createJourney = async (req, res) => {
     const leader = req.user._id;
 
     try {
+        // Update user role to Group Leader when creating a journey
+        await require('../models/User').findByIdAndUpdate(leader, { role: 'Group Leader' });
+        
         const journey = await JourneySession.create({
             leader,
             destination
